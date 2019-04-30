@@ -6,9 +6,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="view.MainWindowController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <TableView layoutX="0.0" layoutY="0.0" prefHeight="400.0" prefWidth="600.0">
+    <TableView layoutX="0.0" layoutY="0.0" prefHeight="400.0" prefWidth="600.0" fx:id="trottinetteTable">
       <columns>
         <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="300.0" text="Trottinettes" fx:id="trottinette"/>
         <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="300.0" text="Position" fx:id="position"/>

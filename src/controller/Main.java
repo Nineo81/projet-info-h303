@@ -4,15 +4,14 @@ import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import model.CSVParser;
 import model.Trottinette;
+import model.XmlParserMech;
 import view.ConnectionController;
 import view.MainWindowController;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

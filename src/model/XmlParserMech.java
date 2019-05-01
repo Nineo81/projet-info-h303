@@ -2,7 +2,7 @@ package model;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class XmlParserMech extends XmlParser{
     private static final String ID = "mechanicID";
@@ -17,22 +17,22 @@ public abstract class XmlParserMech extends XmlParser{
     private static final String HIRE = "hireDate";
     private static final String BANK = "bankaccount";
 
-    public void openFile(Node node) {
+    public HashMap<String, String> openFile(Node node) {
         Element element = (Element) node;
-        ArrayList<String> data = new ArrayList<>();
-        data.add(getTagInfo(element, ID));
-        data.add(getTagInfo(element, LAST));
-        data.add(getTagInfo(element, FIRST));
-        data.add(getTagInfo(element, PASS));
-        data.add(getTagInfo(element, PHONE));
-        data.add(getTagInfo(element, CITY));
-        data.add(getTagInfo(element, CP));
-        data.add(getTagInfo(element, STREET));
-        data.add(getTagInfo(element, NUMBER));
-        data.add(getTagInfo(element, HIRE));
-        data.add(getTagInfo(element, BANK));
+        HashMap<String, String> data = new HashMap<>();
+        data.put(ID, getTagInfo(element, ID));
+        data.put(LAST,getTagInfo(element, LAST));
+        data.put(FIRST,getTagInfo(element, FIRST));
+        data.put(PASS,getTagInfo(element, PASS));
+        data.put(PHONE,getTagInfo(element, PHONE));
+        data.put(CITY,getTagInfo(element, CITY));
+        data.put(CP,getTagInfo(element, CP));
+        data.put(STREET,getTagInfo(element, STREET));
+        data.put(NUMBER,getTagInfo(element, NUMBER));
+        data.put(HIRE,getTagInfo(element, HIRE));
+        data.put(BANK,getTagInfo(element, BANK));
 
-        Inject(data);
+        return data;
 
     }
 

@@ -2,33 +2,25 @@ package model;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class XmlParserAnonymous extends XmlParser{
 
-    public static final String ID = "ID";
-    public static final String PASS = "password";
-    public static final String BANK = "bankaccount";
+    private static final String ID = "ID";
+    private static final String PASS = "password";
+    private static final String BANK = "bankaccount";
 
 
-    public void openFile(Node node) {
+    public HashMap<String, String> openFile(Node node) {
         Element element = (Element) node;
-        ArrayList<String> data = new ArrayList<>();
-        data.add(getTagInfo(element, ID));
-        data.add(getTagInfo(element, PASS));
-        data.add(getTagInfo(element, BANK));
-
-        Inject(data);
+        HashMap<String, String> data = new HashMap<>();
+        data.put(ID, getTagInfo(element, ID));
+        data.put(PASS, getTagInfo(element, PASS));
+        data.put(BANK, getTagInfo(element, BANK));
+        return data;
 
     }
 
-    /**
-     *Extract image's info by tag
-     *
-     * @param element (the node casted as an Element)
-     * @param tag
-     * @return the info
-     */
     private String getTagInfo(Element element, String tag){
         String info = null;
         if (element.getElementsByTagName(tag).item(0) != null) {

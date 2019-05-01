@@ -8,16 +8,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import model.CSVParser;
 import model.Trottinette;
 import view.ConnectionController;
 import view.MainWindowController;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main extends Application {
 
     private LoginPage loginPage;
-    private Scene loginScene;
     private Stage window;
 
     @FXML
@@ -26,6 +28,7 @@ public class Main extends Application {
     FXMLLoader mainWindowLoader = new FXMLLoader(getClass().getResource("../view/MainWindow.fxml"));
 
     public static void main(String[] args){
+        ArrayList<HashMap<String,String>> list = CSVParser.parsing("Database_Data/reloads.csv");
         launch(args);
     }
 

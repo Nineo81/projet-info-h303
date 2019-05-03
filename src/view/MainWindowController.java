@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import model.Trottinette;
 
 public class MainWindowController {
@@ -31,6 +32,16 @@ public class MainWindowController {
         //Specify column content
         trottinette.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         position.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPosition()));
+    }
+
+    /**
+     * Handle click on a specified row of the table
+     * @param e click event
+     */
+
+    @FXML
+    private void clickItem(MouseEvent e){
+        Trottinette trottinette = trottinetteTable.getSelectionModel().getSelectedItem();
     }
 
     /**

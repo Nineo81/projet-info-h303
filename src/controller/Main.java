@@ -50,7 +50,7 @@ public class Main extends Application {
         return new Scene(content);
     }
 
-    public Scene createMainWindowScene(ObservableList<Trottinette> trottinettes) throws IOException {
+    private Scene createMainWindowScene(ObservableList<Trottinette> trottinettes) throws IOException {
         MainWindowController mainWindowController = new MainWindowController(trottinettes);
         mainWindowLoader.setController(mainWindowController);
         AnchorPane content = mainWindowLoader.load();

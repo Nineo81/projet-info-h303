@@ -18,5 +18,6 @@
     <orderEntry type="library" name="javafx.web" level="project" />
     <orderEntry type="library" name="opencsv-4.6" level="project" />
     <orderEntry type="library" name="commons-lang3-3.9" level="project" />
+    <orderEntry type="library" name="derby" level="project" />
   </component>
 </module>

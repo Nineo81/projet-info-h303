@@ -19,6 +19,7 @@ public class XmlParserAnonymous{
     private static final String PASS = "password";
     private static final String BANK = "bankaccount";
     private static DocumentBuilder builder;
+
     public static ArrayList<HashMap<String,String>> parse(String xml) {
         ArrayList<HashMap<String,String>> allData = new ArrayList<>();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

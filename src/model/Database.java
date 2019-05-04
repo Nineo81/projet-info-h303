@@ -1,12 +1,9 @@
 package model;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Database {
@@ -109,11 +106,39 @@ public class Database {
         statement.setInt(7, Integer.parseInt(Technicien.get("cp")));
         statement.setString(8, Technicien.get("street"));
         statement.setInt(9, Integer.parseInt(Technicien.get("number")));
-        Date date = formatter.parse(Technicien.get("hireDate"));
+        Date date = (Date) formatter.parse(Technicien.get("hireDate"));
         java.sql.Date dateSQL = new java.sql.Date(date.getTime());
         statement.setDate(10, dateSQL);
         statement.setLong(11, Long.parseLong(Technicien.get("bankaccount")));
         statement.execute();
 
+    }
+
+    public ArrayList<Trottinette> getTrottinette() throws SQLException {
+        ArrayList<Trottinette> trotis = new ArrayList<Trottinette>();
+        PreparedStatement statement = conn.prepareStatement("SELECT * FROM TROTTINETTE");
+        ResultSet res = statement.executeQuery();
+        while(res.next()) {
+            trotis.add(new Trottinette(res.getInt("TID"), res.getInt("DATESERVICE"), res.getInt("MODELE"), res.getInt("PLAINTE"), res.getInt("BATTERIE"), res.getInt("DISPONIBLE"), res.getInt("POSITIONX"), res.getInt("POSITIONY")));
+        }
+        return trotis;
+    }
+
+    public void injectTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.util.Date date = formatter.parse(hmap.get(" mise en service"));
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        PreparedStatement statement = conn.prepareStatement("INSERT INTO " +
+                "TROTTINETTE(TID, DATESERVICE, MODELE, PLAINTE, BATTERIE" +
+                ", DISPONIBLE, POSITIONX, POSITIONY)values(?,?,?,?,?,?,?,?)");
+        statement.setInt(1, Integer.parseInt(hmap.get("numero")));
+        statement.setDate(2, sqlDate);
+        statement.setString(3, hmap.get(" modele"));
+        statement.setInt(4, Integer.parseInt(hmap.get(" plainte")));
+        statement.setInt(5, Integer.parseInt(hmap.get(" charge")));
+        statement.setInt(6, Integer.parseInt("0"));
+        statement.setDouble(7, Double.parseDouble("0"));
+        statement.setDouble(8, Double.parseDouble("0"));
+        statement.execute();
     }
 }

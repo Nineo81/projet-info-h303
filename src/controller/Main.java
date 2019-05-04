@@ -8,11 +8,14 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import model.CSVParser;
+import model.Database;
 import model.Trottinette;
 import model.XmlParserMech;
 import view.ConnectionController;
 import view.MainWindowController;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,6 +40,7 @@ public class Main extends Application {
 
         window.setScene(createLoginScene());
         window.show();
+
     }
 
     public Scene createLoginScene() throws IOException {

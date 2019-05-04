@@ -30,8 +30,8 @@ public class MainWindowController {
         //Specify table object
         trottinetteTable.setItems(trottinettes);
         //Specify column content
-        trottinette.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
-        position.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPosition()));
+        trottinette.setCellValueFactory(cellData -> new SimpleStringProperty(Integer.toString(cellData.getValue().getTID())));
+        position.setCellValueFactory(cellData -> new SimpleStringProperty(Integer.toString(cellData.getValue().getModel())));
     }
 
     /**

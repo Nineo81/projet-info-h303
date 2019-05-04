@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Database {
@@ -49,6 +52,7 @@ public class Database {
         return instance;
     }
 
+
     public void insertUtilisateur(HashMap<String,String> Utilisateur) throws SQLException {
         String query = "INSERT INTO UTILISATEUR (" +
                        "UID, MOTDEPASSE, NUMCARTE)" +
@@ -63,29 +67,53 @@ public class Database {
     public void insertRechargeur(HashMap<String,String> rechargeur) throws SQLException {
         //Adding Rechargeur id, password and bankaccount to UTILISATEUR
         String userQuery = "INSERT INTO UTILISATEUR (" +
-                       "UID, MOTDEPASSE, NUMCARTE)" +
-                       "values(?,?,?)";
+                "UID, MOTDEPASSE, NUMCARTE)" +
+                "values(?,?,?)";
         //Adding Rechargeur other info to RECHARGEUR
         String regiQuery = "INSERT INTO RECHARGEUR (" +
-                           "UID, NOM, PRENOM, NUMTEL, " +
-                           "COMMUNE, CODEPOSTAL, RUE, NUMERO)" +
-                           "values(?,?,?,?,?,?,?,?)";
+                "UID, NOM, PRENOM, NUMTEL, " +
+                "COMMUNE, CODEPOSTAL, RUE, NUMERO)" +
+                "values(?,?,?,?,?,?,?,?)";
         PreparedStatement userStatement = this.conn.prepareStatement(userQuery);
-        userStatement.setInt(1,Integer.parseInt(rechargeur.get("ID")));
-        userStatement.setInt(2,Integer.parseInt(rechargeur.get("password")));
-        userStatement.setInt(3,Integer.parseInt(rechargeur.get("bankaccount")));
+        userStatement.setInt(1, Integer.parseInt(rechargeur.get("ID")));
+        userStatement.setInt(2, Integer.parseInt(rechargeur.get("password")));
+        userStatement.setInt(3, Integer.parseInt(rechargeur.get("bankaccount")));
 
         PreparedStatement regiStatement = this.conn.prepareStatement(regiQuery);
-        regiStatement.setString(1,rechargeur.get("ID"));
-        regiStatement.setString(2,rechargeur.get("lastname"));
-        regiStatement.setString(3,rechargeur.get("firstname"));
-        regiStatement.setInt(4,Integer.parseInt(rechargeur.get("phone")));
-        regiStatement.setString(5,rechargeur.get("city"));
-        regiStatement.setInt(6,Integer.parseInt(rechargeur.get("cp")));
-        regiStatement.setString(7,rechargeur.get("street"));
-        regiStatement.setInt(8,Integer.parseInt(rechargeur.get("number")));
+        regiStatement.setString(1, rechargeur.get("ID"));
+        regiStatement.setString(2, rechargeur.get("lastname"));
+        regiStatement.setString(3, rechargeur.get("firstname"));
+        regiStatement.setInt(4, Integer.parseInt(rechargeur.get("phone")));
+        regiStatement.setString(5, rechargeur.get("city"));
+        regiStatement.setInt(6, Integer.parseInt(rechargeur.get("cp")));
+        regiStatement.setString(7, rechargeur.get("street"));
+        regiStatement.setInt(8, Integer.parseInt(rechargeur.get("number")));
 
         userStatement.execute();
         regiStatement.execute();
+    }
+
+    public void insertTechnicien(HashMap<String, String> Technicien) throws SQLException, ParseException {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        PreparedStatement statement = this.conn.prepareStatement("INSERT INTO " +
+                "TECHNICIEN(techid, nom, prenom, motdepasse, numtel, commune, codepostal, rue, numero, dateembauche, compte)"+
+                "values(?,?,?,?,?,?,?,?,?,?,?)");
+        statement.setString(1, Technicien.get("mechanicID"));
+        statement.setString(2, Technicien.get("lastname"));
+        statement.setString(3, Technicien.get("firstname"));
+        statement.setInt(4, Integer.parseInt(Technicien.get("password")));
+        statement.setInt(5, Integer.parseInt(Technicien.get("phone")));
+        statement.setString(6, Technicien.get("city"));
+        statement.setInt(7, Integer.parseInt(Technicien.get("cp")));
+        statement.setString(8, Technicien.get("street"));
+        statement.setInt(9, Integer.parseInt(Technicien.get("number")));
+        Date date = formatter.parse(Technicien.get("hireDate"));
+        java.sql.Date dateSQL = new java.sql.Date(date.getTime());
+        statement.setDate(10, dateSQL);
+        statement.setLong(11, Long.parseLong(Technicien.get("bankaccount")));
+        statement.execute();
+
     }
 }

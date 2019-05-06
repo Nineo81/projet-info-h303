@@ -55,7 +55,6 @@ public class XmlParserAnonymous{
         data.put(ID, getTagInfo(element, ID));
         data.put(PASS, getTagInfo(element, PASS));
         data.put(BANK, getTagInfo(element, BANK));
-        System.out.println(data);
         return data;
 
     }

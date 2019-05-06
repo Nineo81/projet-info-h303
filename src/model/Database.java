@@ -62,7 +62,7 @@ public class Database {
         PreparedStatement statement = this.conn.prepareStatement(query);
         statement.setInt(1,Integer.parseInt(Utilisateur.get("ID")));
         statement.setInt(2,Integer.parseInt(Utilisateur.get("password")));
-        statement.setInt(3,Integer.parseInt(Utilisateur.get("bankaccount")));
+        statement.setString(3,Utilisateur.get("bankaccount"));
         statement.execute();
     }
 
@@ -79,10 +79,10 @@ public class Database {
         PreparedStatement userStatement = this.conn.prepareStatement(userQuery);
         userStatement.setInt(1, Integer.parseInt(rechargeur.get("ID")));
         userStatement.setInt(2, Integer.parseInt(rechargeur.get("password")));
-        userStatement.setInt(3, Integer.parseInt(rechargeur.get("bankaccount")));
+        userStatement.setString(3, rechargeur.get("bankaccount"));
 
         PreparedStatement regiStatement = this.conn.prepareStatement(regiQuery);
-        regiStatement.setString(1, rechargeur.get("ID"));
+        regiStatement.setInt(1, Integer.parseInt(rechargeur.get("ID")));
         regiStatement.setString(2, rechargeur.get("lastname"));
         regiStatement.setString(3, rechargeur.get("firstname"));
         regiStatement.setInt(4, Integer.parseInt(rechargeur.get("phone")));
@@ -145,5 +145,28 @@ public class Database {
         statement.setDouble(7, Double.parseDouble("0"));
         statement.setDouble(8, Double.parseDouble("0"));
         statement.execute();
+    }
+
+    public void init() throws SQLException, ParseException {
+        //ArrayList<HashMap<String,String>> reloads = CSVParser.parsing("Database_Data/reloads.csv");
+        ArrayList<HashMap<String,String>> reparations = CSVParser.parsing("Database_Data/reparations.csv");
+        ArrayList<HashMap<String,String>> scooters = CSVParser.parsing("Database_Data/scooters.csv");
+        //ArrayList<HashMap<String,String>> trips = CSVParser.parsing("Database_Data/trips.csv");
+        ArrayList<HashMap<String,String>> anonymous = XmlParserAnonymous.parse("Database_Data/anonyme_users.xml");
+        ArrayList<HashMap<String,String>> mecaniciens = XmlParserMech.parse("Database_Data/mecaniciens.xml");
+        ArrayList<HashMap<String,String>> registeredUsers = XmlParserRegistered.parse("Database_Data/registeredUsers.xml");
+
+        for(HashMap<String, String> hmap : scooters){
+            injectTrottinette(hmap);
+        }
+        for(HashMap<String, String> hmap : anonymous){
+            insertUtilisateur(hmap);
+        }
+        for(HashMap<String, String> hmap : mecaniciens){
+            insertTechnicien(hmap);
+        }
+        for(HashMap<String, String> hmap : registeredUsers){
+            insertRechargeur(hmap);
+        }
     }
 }

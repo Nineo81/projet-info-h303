@@ -37,15 +37,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         window = primaryStage;
-        Database database = Database.getInstance();
-        database.open();
-        try {
-            database.init();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        //Database database = Database.getInstance();
+        //database.open();
         window.setScene(createLoginScene());
         window.show();
 

@@ -204,9 +204,8 @@ public class Database {
         java.sql.Timestamp repaire = new java.sql.Timestamp(date.getTime());
 
         String TechID = Intervention.get(" mechanic");
-        String zero = "0";
         while (TechID.getBytes().length < 20){
-            TechID = zero + TechID;
+            TechID = "0" + TechID;
         }
 
         PreparedStatement statement = this.conn.prepareStatement("INSERT INTO " +
@@ -251,5 +250,44 @@ public class Database {
         for(HashMap<String, String> hmap : reparations){
            insertIntervention(hmap);
         }
+    }
+
+    public ArrayList<HashMap<String,String>> getUserHistory(int ID) throws SQLException {
+        ArrayList<HashMap<String,String>> trips  = new ArrayList<>();
+        HashMap<String, String> trip = new HashMap<>();
+        PreparedStatement statement = conn.prepareStatement(
+                "SELECT SOURCEX, SOURCEY, DESTX, DESTY, DATEDEPART, DATEFIN " +
+                    "FROM TRAJET " +
+                    "WHERE UID = ?");
+        statement.setInt(1,ID);
+        ResultSet res = statement.executeQuery();
+        while(res.next()) {
+            trip.put(" sourceX", String.valueOf(res.getDouble("sourceX")));
+            trip.put(" sourceY", String.valueOf(res.getDouble("sourceY")));
+            trip.put(" destinationX", String.valueOf(res.getDouble("destX")));
+            trip.put(" destinationY", String.valueOf(res.getDouble("destY")));
+            trip.put(" starttime", String.valueOf(res.getTimestamp("dateDepart")));
+            trip.put(" endtime", String.valueOf(res.getTimestamp("dateFin")));
+            trips.add(new HashMap<>(trip));
+        }
+        statement.close();
+        res.close();
+        return  trips;
+    }
+
+    public ArrayList<Integer> getR2() throws SQLException {
+        ArrayList<Integer> users = new ArrayList<>();
+        PreparedStatement statement = conn.prepareStatement(
+                "SELECT DISTINCT Recharge.UID " +
+                        "FROM RECHARGE " +
+                        "WHERE NOT EXISTS ( SELECT * " +
+                                            "From)");
+        ResultSet res = statement.executeQuery();
+        while (res.next()){
+            users.add(res.getInt("UID"));
+        }
+        res.close();
+        statement.close();
+        return users;
     }
 }

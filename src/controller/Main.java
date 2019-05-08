@@ -35,10 +35,11 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) throws IOException, SQLException {
         window = primaryStage;
-        //Database database = Database.getInstance();
-        //database.open();
+        Database database = Database.getInstance();
+        database.open();
+        System.out.println(database.getR2());
         window.setScene(createLoginScene());
         window.show();
 

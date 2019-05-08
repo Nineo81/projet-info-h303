@@ -34,7 +34,7 @@ public class Main extends Application {
         Database data = Database.getInstance();
         data.open();
         try {
-            data.introduceComplain(16);
+            System.out.println(data.checkUser(1000000, 8713));
         } catch (SQLException e) {
             e.printStackTrace();
         }

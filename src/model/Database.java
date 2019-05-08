@@ -5,11 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 public class Database {
     private String CONNECTION_URL = "jdbc:derby:" + "Database" + ";create=false";
@@ -64,6 +60,7 @@ public class Database {
         statement.setInt(2,Integer.parseInt(Utilisateur.get("password")));
         statement.setString(3,Utilisateur.get("bankaccount"));
         statement.execute();
+        statement.close();
     }
 
     public void insertRechargeur(HashMap<String,String> rechargeur) throws SQLException {
@@ -119,6 +116,25 @@ public class Database {
 
     }
 
+    public void injectTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.util.Date date = formatter.parse(hmap.get(" mise en service"));
+        java.sql.Timestamp sqlDate = new Timestamp(date.getTime());
+        PreparedStatement statement = conn.prepareStatement("INSERT INTO " +
+                "TROTTINETTE(TID, DATESERVICE, MODELE, PLAINTE, BATTERIE" +
+                ", POSITIONX, POSITIONY, STATE)values(?,?,?,?,?,?,?,?)");
+        statement.setInt(1, Integer.parseInt(hmap.get("numero")));
+        statement.setTimestamp(2, sqlDate);
+        statement.setString(3, hmap.get(" modele"));
+        statement.setInt(4, Integer.parseInt(hmap.get(" plainte")));
+        statement.setInt(5, Integer.parseInt(hmap.get(" charge")));
+        statement.setDouble(6, Double.parseDouble("0"));
+        statement.setDouble(7, Double.parseDouble("0"));
+        statement.setString(8, "libre");
+        statement.execute();
+        statement.close();
+    }
+
     public ArrayList<Trottinette> getTrottinette() throws SQLException {
         ArrayList<Trottinette> trotis = new ArrayList<Trottinette>();
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM TROTTINETTE");
@@ -129,22 +145,78 @@ public class Database {
         return trotis;
     }
 
-    public void injectTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        java.util.Date date = formatter.parse(hmap.get(" mise en service"));
-        java.sql.Timestamp sqlDate = new Timestamp(date.getTime());
-        PreparedStatement statement = conn.prepareStatement("INSERT INTO " +
-                "TROTTINETTE(TID, DATESERVICE, MODELE, PLAINTE, BATTERIE" +
-                ", DISPONIBLE, POSITIONX, POSITIONY)values(?,?,?,?,?,?,?,?)");
-        statement.setInt(1, Integer.parseInt(hmap.get("numero")));
-        statement.setTimestamp(2, sqlDate);
-        statement.setString(3, hmap.get(" modele"));
-        statement.setInt(4, Integer.parseInt(hmap.get(" plainte")));
-        statement.setInt(5, Integer.parseInt(hmap.get(" charge")));
-        statement.setInt(6, Integer.parseInt("0"));
-        statement.setDouble(7, Double.parseDouble("0"));
-        statement.setDouble(8, Double.parseDouble("0"));
+    public void deleteTrottinette(int TID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("DELETE FROM TROTTINETTE WHERE TID = " + TID);
         statement.execute();
+        statement.close();
+    }
+
+    public ArrayList<HashMap<String, Integer>> getTrottinettesDispo() throws SQLException {
+        ArrayList<HashMap<String, Integer>> trottinettes = new ArrayList<>();
+        PreparedStatement statement = conn.prepareStatement("SELECT TID, POSITIONX" +
+                ", POSITIONY FROM TROTTINETTE WHERE STATE = libre");
+        ResultSet res = statement.executeQuery();
+        while(res.next()) {
+            HashMap<String, Integer> hmap = new HashMap<>();
+            hmap.put("TID", res.getInt("TID"));
+            hmap.put("POSITIONX", res.getInt("POSITIONX"));
+            hmap.put("POSITIONY", res.getInt("POSITIONY"));
+            trottinettes.add(hmap);
+        }
+        res.close();
+        return trottinettes;
+    }
+
+    public int getBattery(int TID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("SELECT BATTERIE FROM TROTTINETTE WHERE TID = " + TID);
+        ResultSet res = statement.executeQuery();
+        res.next();
+        int charge = res.getInt("BATTERIE");
+        res.close();
+        return charge;
+    }
+
+    public void introduceComplain(int TID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1 WHERE TID = " + TID);
+        statement.execute();
+        statement.close();
+    }
+
+    public void clearComplain(int TID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = 0 WHERE TID = " + TID);
+        statement.execute();
+        statement.close();
+    }
+
+    public void stateUpdate(String newState, int TID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET STATE = " + newState + " WHERE TID = " + TID);
+        statement.execute();
+        statement.close();
+    }
+
+    public ArrayList<Integer> tenComplaints() throws SQLException {
+        ArrayList<Integer> list = new ArrayList<>();
+        PreparedStatement statement = conn.prepareStatement("SELECT TID FROM INTERVENTION GROUP BY TID HAVING COUNT(TID)>9");
+        ResultSet res = statement.executeQuery();
+        while(res.next()){
+            list.add(res.getInt("TID"));
+        }
+        res.close();
+        return list;
+    }
+
+    public boolean checkUser(int UID, int password) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("SELECT UID, MOTDEPASSE FROM UTILISATEUR WHERE UID = ?");
+        statement.setInt(1, UID);
+        ResultSet res = statement.executeQuery();
+        res.next();
+        if (res.getInt("MOTDEPASSE") == password) {
+            res.close();
+            return true;
+        } else {
+            res.close();
+            return false;
+        }
     }
 
     public void insertTrajet(HashMap<String, String> Trajet) throws SQLException, ParseException {

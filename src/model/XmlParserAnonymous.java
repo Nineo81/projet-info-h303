@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class XmlParserAnonymous{
+class XmlParserAnonymous{
 
     private static final String ID = "ID";
     private static final String PASS = "password";
@@ -49,7 +49,7 @@ public class XmlParserAnonymous{
         return allData;
     }
 
-    public static HashMap<String, String> openFile(Node node) {
+    private static HashMap<String, String> openFile(Node node) {
         Element element = (Element) node;
         HashMap<String, String> data = new HashMap<>();
         data.put(ID, getTagInfo(element, ID));

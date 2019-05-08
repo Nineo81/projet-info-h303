@@ -37,13 +37,20 @@ public class Main extends Application {
     FXMLLoader infoTrottiLoader = new FXMLLoader(getClass().getResource("../view/InfoTrotti.fxml"));
 
     public static void main(String[] args){
+        ArrayList<HashMap<String,String>> list = CSVParser.parsing("Database_Data/reloads.csv");
+        Database data = Database.getInstance();
+        data.open();
+        try {
+            System.out.println(data.checkUser(1000000, 8713));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         window = primaryStage;
-
         window.setScene(createLoginScene());
         window.show();
 

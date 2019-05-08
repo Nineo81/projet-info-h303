@@ -278,13 +278,44 @@ public class Database {
     public ArrayList<Integer> getR2() throws SQLException {
         ArrayList<Integer> users = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement(
-                "SELECT DISTINCT Recharge.UID " +
-                        "FROM RECHARGE " +
-                        "WHERE NOT EXISTS ( SELECT * " +
-                                            "From)");
+                "SELECT RECHARGEUR.UID " +                  //Utilisateurs pour lesquels il n'existe pas de trottinettes
+                        "FROM RECHARGEUR " +                       //rechargées mais pas utilisées
+                        "WHERE NOT EXISTS(SELECT *" +           //Recharges de trottinettes rechargées mais pas utilisées par un même utilisateur
+                        "                  FROM RECHARGE" +
+                        "                  WHERE NOT EXISTS(SELECT *" +
+                        "                                  FROM TRAJET" +
+                        "                                  WHERE TRAJET.UID = RECHARGE.UID AND TRAJET.TID = RECHARGE.TID))");
         ResultSet res = statement.executeQuery();
         while (res.next()){
             users.add(res.getInt("UID"));
+        }
+        res.close();
+        statement.close();
+        return users;
+    }
+
+    public ArrayList<HashMap<String,String>> getR5() throws SQLException {
+        ArrayList<HashMap<String,String>> users = new ArrayList<>();
+        HashMap<String, String> user = new HashMap<>();
+        PreparedStatement statement = conn.prepareStatement(
+                "SELECT UID, AVG({fn timestampdiff(SQL_TSI_MINUTE , DATEDEPART, DATEFIN )}), COUNT(UID)," +
+                        "       SUM(CASE" +
+                        "          WHEN {fn timestampdiff(SQL_TSI_MINUTE , DATEDEPART, DATEFIN )} > 1440" +
+                        "            THEN 1 + 36 * FLOOR({fn timestampdiff(SQL_TSI_MINUTE , DATEDEPART, DATEFIN )}/1440)" +
+                        "          WHEN {fn timestampdiff(SQL_TSI_MINUTE , DATEDEPART, DATEFIN )} > 60" +
+                        "            THEN 1 + 6.5 * FLOOR({fn timestampdiff(SQL_TSI_MINUTE , DATEDEPART, DATEFIN )}/60)" +
+                        "          ELSE 1 + 0.15 * {fn timestampdiff(SQL_TSI_MINUTE , DATEDEPART, DATEFIN )}" +
+                        "        END)" +
+                        "from TRAJET " +
+                        "GROUP BY UID " +
+                        "HAVING COUNT(UID) >= 10");
+        ResultSet res = statement.executeQuery();
+        while (res.next()){
+            user.put("UID", String.valueOf(res.getInt("UID")));
+            user.put("averageTime", String.valueOf(res.getInt("2")));
+            user.put("tripsCount", String.valueOf(res.getInt("3")));
+            user.put("money", String.valueOf(res.getInt("4")));
+            users.add(new HashMap<>(user));
         }
         res.close();
         statement.close();

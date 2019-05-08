@@ -39,7 +39,7 @@ public class Main extends Application {
         window = primaryStage;
         Database database = Database.getInstance();
         database.open();
-        System.out.println(database.getR2());
+        System.out.println(database.getR5().get(0));
         window.setScene(createLoginScene());
         window.show();
 

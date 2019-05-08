@@ -1,8 +1,10 @@
 package view;
 
+import controller.MainWindowPage;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
@@ -11,6 +13,11 @@ import model.Trottinette;
 public class MainWindowController {
 
     private ObservableList<Trottinette> trottinettes;
+
+    private MainWindowPage mainWindowPage;
+
+    @FXML
+    private Label username;
 
     @FXML
     private TableView<Trottinette> trottinetteTable;
@@ -34,6 +41,11 @@ public class MainWindowController {
         position.setCellValueFactory(cellData -> new SimpleStringProperty(Integer.toString(cellData.getValue().getModel())));
     }
 
+    @FXML
+    private void handleHistoryAction(){
+        mainWindowPage.historyAccess();
+    }
+
     /**
      * Handle click on a specified row of the table
      * @param e click event
@@ -49,7 +61,12 @@ public class MainWindowController {
      * @param trottinettes specified list
      */
 
-    public MainWindowController(ObservableList<Trottinette> trottinettes){
+    public MainWindowController(String username,ObservableList<Trottinette> trottinettes){
+        this.username.setText(username);
         this.trottinettes = trottinettes;
+    }
+
+    public void setMainWindowPage(MainWindowPage mainWindowPage) {
+        this.mainWindowPage = mainWindowPage;
     }
 }

@@ -95,6 +95,8 @@ public class Database {
     public void insertTechnicien(HashMap<String, String> Technicien) throws SQLException, ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = formatter.parse(Technicien.get("hireDate"));
+        java.sql.Timestamp dateSQL = new java.sql.Timestamp(date.getTime());
 
         PreparedStatement statement = this.conn.prepareStatement("INSERT INTO " +
                 "TECHNICIEN(techid, nom, prenom, motdepasse, numtel, commune, codepostal, rue, numero, dateembauche, compte)"+
@@ -108,9 +110,7 @@ public class Database {
         statement.setInt(7, Integer.parseInt(Technicien.get("cp")));
         statement.setString(8, Technicien.get("street"));
         statement.setInt(9, Integer.parseInt(Technicien.get("number")));
-        Date date = formatter.parse(Technicien.get("hireDate"));
-        java.sql.Date dateSQL = new java.sql.Date(date.getTime());
-        statement.setDate(10, dateSQL);
+        statement.setTimestamp(10, dateSQL);
         statement.setLong(11, Long.parseLong(Technicien.get("bankaccount")));
         statement.execute();
 
@@ -119,12 +119,12 @@ public class Database {
     public void injectTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = formatter.parse(hmap.get(" mise en service"));
-        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        java.sql.Timestamp sqlDate = new Timestamp(date.getTime());
         PreparedStatement statement = conn.prepareStatement("INSERT INTO " +
                 "TROTTINETTE(TID, DATESERVICE, MODELE, PLAINTE, BATTERIE" +
                 ", POSITIONX, POSITIONY, STATE)values(?,?,?,?,?,?,?,?)");
         statement.setInt(1, Integer.parseInt(hmap.get("numero")));
-        statement.setDate(2, sqlDate);
+        statement.setTimestamp(2, sqlDate);
         statement.setString(3, hmap.get(" modele"));
         statement.setInt(4, Integer.parseInt(hmap.get(" plainte")));
         statement.setInt(5, Integer.parseInt(hmap.get(" charge")));
@@ -219,12 +219,85 @@ public class Database {
         }
     }
 
-    // Function used to fill the database if empty
+    public void insertTrajet(HashMap<String, String> Trajet) throws SQLException, ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.util.Date date = formatter.parse(Trajet.get(" starttime"));
+        java.sql.Timestamp start = new java.sql.Timestamp(date.getTime());
+
+        date = formatter.parse(Trajet.get(" endtime"));
+        java.sql.Timestamp end = new java.sql.Timestamp(date.getTime());
+
+        PreparedStatement statement = this.conn.prepareStatement("INSERT INTO " +
+                "TRAJET(TID, UID, SOURCEX, SOURCEY, DESTX, DESTY, DATEDEPART, DATEFIN)"+
+                "values(?,?,?,?,?,?,?,?)");
+        statement.setInt(1, Integer.parseInt(Trajet.get("scooter")));
+        statement.setInt(2, Integer.parseInt(Trajet.get(" user")));
+        statement.setDouble(3, Double.parseDouble(Trajet.get(" sourceX")));
+        statement.setDouble(4, Double.parseDouble(Trajet.get(" sourceY")));
+        statement.setDouble(5, Double.parseDouble(Trajet.get(" destinationX")));
+        statement.setDouble(6, Double.parseDouble(Trajet.get(" destinationY")));
+        statement.setTimestamp(7, start);
+        statement.setTimestamp(8, end);
+        statement.execute();
+
+    }
+
+    public void insertRecharge(HashMap<String, String> Recharge) throws SQLException, ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.util.Date date = formatter.parse(Recharge.get(" startTime"));
+        java.sql.Timestamp start = new java.sql.Timestamp(date.getTime());
+
+        date = formatter.parse(Recharge.get(" endTime"));
+        java.sql.Timestamp end = new java.sql.Timestamp(date.getTime());
+
+        PreparedStatement statement = this.conn.prepareStatement("INSERT INTO " +
+                "RECHARGE(TID, UID, CHARGEI, CHARGEF, SOURCEX, SOURCEY, DESTX, DESTY, DATEDEPART, DATEFIN)"+
+                "values(?,?,?,?,?,?,?,?,?,?)");
+        statement.setInt(1, Integer.parseInt(Recharge.get("scooter")));
+        statement.setInt(2, Integer.parseInt(Recharge.get(" user")));
+        statement.setInt(3, Integer.parseInt(Recharge.get(" initialLoad")));
+        statement.setInt(4, Integer.parseInt(Recharge.get(" finalLoad")));
+        statement.setDouble(5, Double.parseDouble(Recharge.get(" sourceX")));
+        statement.setDouble(6, Double.parseDouble(Recharge.get(" sourceY")));
+        statement.setDouble(7, Double.parseDouble(Recharge.get(" destinationX")));
+        statement.setDouble(8, Double.parseDouble(Recharge.get(" destinationY")));
+        statement.setTimestamp(9, start);
+        statement.setTimestamp(10, end);
+        statement.execute();
+
+    }
+
+    public void insertIntervention(HashMap<String, String> Intervention) throws SQLException, ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.util.Date date = formatter.parse(Intervention.get(" complainTime"));
+        java.sql.Timestamp complain = new java.sql.Timestamp(date.getTime());
+
+        date = formatter.parse(Intervention.get(" repaireTime"));
+        java.sql.Timestamp repaire = new java.sql.Timestamp(date.getTime());
+
+        String TechID = Intervention.get(" mechanic");
+        String zero = "0";
+        while (TechID.getBytes().length < 20){
+            TechID = zero + TechID;
+        }
+
+        PreparedStatement statement = this.conn.prepareStatement("INSERT INTO " +
+                "INTERVENTION(TID, UID, TECHID, DATEPLAINTE, DATEINTERVENTION)"+
+                "values(?,?,?,?,?)");
+        statement.setInt(1, Integer.parseInt(Intervention.get("scooter")));
+        statement.setInt(2, Integer.parseInt(Intervention.get(" user")));
+        statement.setString(3, TechID);
+        statement.setTimestamp(4, complain);
+        statement.setTimestamp(5, repaire);
+        statement.execute();
+
+    }
+
     public void init() throws SQLException, ParseException {
-        //ArrayList<HashMap<String,String>> reloads = CSVParser.parsing("Database_Data/reloads.csv");
+        ArrayList<HashMap<String,String>> reloads = CSVParser.parsing("Database_Data/reloads.csv");
         ArrayList<HashMap<String,String>> reparations = CSVParser.parsing("Database_Data/reparations.csv");
         ArrayList<HashMap<String,String>> scooters = CSVParser.parsing("Database_Data/scooters.csv");
-        //ArrayList<HashMap<String,String>> trips = CSVParser.parsing("Database_Data/trips.csv");
+        ArrayList<HashMap<String,String>> trips = CSVParser.parsing("Database_Data/trips.csv");
         ArrayList<HashMap<String,String>> anonymous = XmlParserAnonymous.parse("Database_Data/anonyme_users.xml");
         ArrayList<HashMap<String,String>> mecaniciens = XmlParserMech.parse("Database_Data/mecaniciens.xml");
         ArrayList<HashMap<String,String>> registeredUsers = XmlParserRegistered.parse("Database_Data/registeredUsers.xml");
@@ -240,6 +313,15 @@ public class Database {
         }
         for(HashMap<String, String> hmap : registeredUsers){
             insertRechargeur(hmap);
+        }
+        for(HashMap<String, String> hmap : trips){
+            insertTrajet(hmap);
+        }
+        for(HashMap<String, String> hmap : reloads){
+            insertRecharge(hmap);
+        }
+        for(HashMap<String, String> hmap : reparations){
+           insertIntervention(hmap);
         }
     }
 }

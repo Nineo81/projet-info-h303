@@ -293,6 +293,16 @@ public class Database {
 
     }
 
+    public int getTravolder() throws SQLException {
+        PreparedStatement statement = conn.prepareStatement(" SELECT TID FROM TRAJET" +
+        " ORDER BY (SQRT((DESTX - SOURCEX)*(DESTX - SOURCEX)+(DESTY - SOURCEY)*(DESTY - SOURCEY)))");
+        ResultSet res = statement.executeQuery();
+        res.next();
+        int result = res.getInt("TID");
+        res.close();
+        return result;
+    }
+
     public void init() throws SQLException, ParseException {
         ArrayList<HashMap<String,String>> reloads = CSVParser.parsing("Database_Data/reloads.csv");
         ArrayList<HashMap<String,String>> reparations = CSVParser.parsing("Database_Data/reparations.csv");

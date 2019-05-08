@@ -1,15 +1,13 @@
 package model;
 
+import javafx.collections.ObservableList;
+
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 public class Database {
     private String CONNECTION_URL = "jdbc:derby:" + "Database" + ";create=false";
@@ -64,6 +62,7 @@ public class Database {
         statement.setInt(2,Integer.parseInt(Utilisateur.get("password")));
         statement.setString(3,Utilisateur.get("bankaccount"));
         statement.execute();
+        statement.close();
     }
 
     public void insertRechargeur(HashMap<String,String> rechargeur) throws SQLException {
@@ -145,8 +144,10 @@ public class Database {
         statement.setDouble(7, Double.parseDouble("0"));
         statement.setDouble(8, Double.parseDouble("0"));
         statement.execute();
+        statement.close();
     }
 
+    // Function used to fill the database if empty
     public void init() throws SQLException, ParseException {
         //ArrayList<HashMap<String,String>> reloads = CSVParser.parsing("Database_Data/reloads.csv");
         ArrayList<HashMap<String,String>> reparations = CSVParser.parsing("Database_Data/reparations.csv");
@@ -168,5 +169,36 @@ public class Database {
         for(HashMap<String, String> hmap : registeredUsers){
             insertRechargeur(hmap);
         }
+    }
+
+    public ArrayList<HashMap<String, Integer>> getTrottinettesDispo() throws SQLException {
+        ArrayList<HashMap<String, Integer>> trottinettes = new ArrayList<>();
+        PreparedStatement statement = this.conn.prepareStatement("SELECT TID, POSITIONX" +
+                ", POSITIONY FROM TROTTINETTE WHERE DISPONIBLE=1");
+        ResultSet res = statement.executeQuery();
+        while(res.next()) {
+            HashMap<String, Integer> hmap = new HashMap<>();
+            hmap.put("TID", res.getInt("TID"));
+            hmap.put("POSITIONX", res.getInt("POSITIONX"));
+            hmap.put("POSITIONY", res.getInt("POSITIONY"));
+            trottinettes.add(hmap);
+        }
+        res.close();
+        return trottinettes;
+    }
+
+    public int getBattery(int TID) throws SQLException {
+        PreparedStatement statement = this.conn.prepareStatement("SELECT BATTERIE FROM TROTTINETTE WHERE TID = " + TID);
+        ResultSet res = statement.executeQuery();
+        res.next();
+        int charge = res.getInt("BATTERIE");
+        res.close();
+        return charge;
+    }
+
+    public void introduceComplain(int TID) throws SQLException {
+        PreparedStatement statement = this.conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1 WHERE TID = " + TID);
+        statement.execute();
+        statement.close();
     }
 }

@@ -31,21 +31,19 @@ public class Main extends Application {
 
     public static void main(String[] args){
         ArrayList<HashMap<String,String>> list = CSVParser.parsing("Database_Data/reloads.csv");
+        Database data = Database.getInstance();
+        data.open();
+        try {
+            data.introduceComplain(16);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         window = primaryStage;
-        Database database = Database.getInstance();
-        database.open();
-        try {
-            database.init();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         window.setScene(createLoginScene());
         window.show();
 

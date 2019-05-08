@@ -34,7 +34,7 @@ public class Main extends Application {
         Database data = Database.getInstance();
         data.open();
         try {
-            System.out.println(data.checkUser(1000000, 8713));
+            System.out.println(data.getTravolder());
         } catch (SQLException e) {
             e.printStackTrace();
         }

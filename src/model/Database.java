@@ -205,28 +205,17 @@ public class Database {
         return list;
     }
 
-    public String[] checkUser(int UID, int password) throws SQLException {
-        String query = "SELECT UID, MOTDEPASSE, " +
-                       "CASE " +
-                         "WHEN EXISTS (" +
-                         "SELECT * FROM RECHARGEUR WHERE UTILISATEUR.UID = RECHARGEUR.UID ) " +
-                         "THEN 'yes' ELSE 'no' END AS ISARECHARGEUR "+
-                       "FROM UTILISATEUR WHERE UTILISATEUR.UID = ?";
-
-        PreparedStatement statement = conn.prepareStatement(query);
+    public boolean checkUser(int UID, int password) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("SELECT UID, MOTDEPASSE FROM UTILISATEUR WHERE UID = ?");
         statement.setInt(1, UID);
         ResultSet res = statement.executeQuery();
         res.next();
-        if (res.getString("ISARECHARGEUR") == "no" && res.getInt("MOTDEPASSE") == password) {
+        if (res.getInt("MOTDEPASSE") == password) {
             res.close();
-            return new String[]{String.valueOf(UID),"user"};
-        }
-        else if(res.getString("ISARECHARGEUR") == "yes" && res.getInt("MOTDEPASSE") == password){
+            return true;
+        } else {
             res.close();
-            return new String[]{Integer.toString(UID),"rechargeur"};
-        }else {
-            res.close();
-            return new String[]{Integer.toString(UID),"none"};
+            return false;
         }
     }
 
@@ -302,6 +291,16 @@ public class Database {
         statement.setTimestamp(5, repaire);
         statement.execute();
 
+    }
+
+    public int getTravolder() throws SQLException {
+        PreparedStatement statement = conn.prepareStatement(" SELECT TID FROM TRAJET" +
+        " ORDER BY (SQRT((DESTX - SOURCEX)*(DESTX - SOURCEX)+(DESTY - SOURCEY)*(DESTY - SOURCEY)))");
+        ResultSet res = statement.executeQuery();
+        res.next();
+        int result = res.getInt("TID");
+        res.close();
+        return result;
     }
 
     public void init() throws SQLException, ParseException {

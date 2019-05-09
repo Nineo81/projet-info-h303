@@ -1,10 +1,13 @@
 package controller;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import model.Database;
+import model.Trottinette;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class LoginPage {
 
@@ -21,7 +24,7 @@ public class LoginPage {
             String[] result = db.checkUser(Integer.parseInt(username),Integer.parseInt(password));
             if(result[1].equals("user")){
                 main.setUsername(result[0]);
-                main.openMainWindow(FXCollections.observableArrayList());
+                main.openMainWindow(trottiList(db));
             } else if(result.equals("rechargeur")){
                 main.setUsername(result[0]);
                 main.openMainWindow(FXCollections.observableArrayList());
@@ -29,6 +32,19 @@ public class LoginPage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private ObservableList<Trottinette> trottiList(Database db){
+        ObservableList<Trottinette> list = FXCollections.observableArrayList();
+
+        try {
+            for(HashMap<String, Integer> trotti : db.getTrottinettesDispo()){
+                list.add(new Trottinette(trotti.get("TID"),0,0,0,0,0,trotti.get("POSITIONX"),trotti.get("POSITIONY")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     /**

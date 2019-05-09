@@ -112,6 +112,7 @@ public class Main extends Application {
 
         MainWindowController controller = mainWindowLoader.getController();
         controller.setMainWindowPage(mainWindowPage);
+        controller.setTrottinettes(trottinettes);
         controller.setUsername(username);
 
         return new Scene(content);

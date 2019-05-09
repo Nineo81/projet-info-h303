@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="432.0" prefWidth="438.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.RegisterController">
+   <children>
+      <Text layoutX="14.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" Inscription :" wrappingWidth="101.33670043945312">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Text>
+      <CheckBox id="user" fx:id="userCB" layoutX="122.0" layoutY="12.0" mnemonicParsing="false" text="Utilisateur">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </CheckBox>
+      <CheckBox id="reloader" fx:id="reloaderCB" layoutX="248.0" layoutY="12.0" mnemonicParsing="false" text="Rechargeur">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </CheckBox>
+      <TextField id="username" fx:id="usernameTextField" layoutX="258.0" layoutY="51.0" />
+      <Text layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pseudo (chiffre uniquement) :" wrappingWidth="193.33670043945312">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="14.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mot de passe (chiffre uniquement) :" wrappingWidth="236.53671264648438">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <PasswordField id="password" fx:id="passwordTextField" layoutX="258.0" layoutY="86.0" />
+      <Text layoutX="14.0" layoutY="136.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Numéro de carte bancaire :" wrappingWidth="177.33670043945312">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField id="account" fx:id="accountTextField" layoutX="258.0" layoutY="118.0" />
+      <Text layoutX="14.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nom :" wrappingWidth="177.33670043945312">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField id="surname" fx:id="surnameTextField" layoutX="258.0" layoutY="150.0" />
+      <Text layoutX="14.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Prénom :" wrappingWidth="177.33670043945312">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField id="name" fx:id="nameTextField" layoutX="258.0" layoutY="182.0" />
+      <Text layoutX="14.0" layoutY="234.0" strokeType="OUTSIDE" strokeWidth="0.0" text="N° téléphone :" wrappingWidth="177.33670043945312">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField id="phone" fx:id="phoneTextField" layoutX="258.0" layoutY="216.0" />
+      <Text layoutX="14.0" layoutY="265.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rue :" wrappingWidth="177.33670043945312">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="14.0" layoutY="296.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Numéro :" wrappingWidth="177.33670043945312">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="14.0" layoutY="329.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Commune :" wrappingWidth="177.33670043945312">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField id="Street" fx:id="streetTextField" layoutX="258.0" layoutY="247.0" />
+      <TextField id="number" fx:id="numberTextField" layoutX="258.0" layoutY="278.0" />
+      <TextField id="commune" fx:id="communeTextField" layoutX="258.0" layoutY="311.0" />
+      <Text layoutX="14.0" layoutY="360.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Code Postal :" wrappingWidth="177.33670043945312">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField id="zipCode" fx:id="zipCodeTextField" layoutX="258.0" layoutY="342.0" />
+      <Button layoutX="292.0" layoutY="378.0" mnemonicParsing="false" onAction="#handleOKAction" text="Valider">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button onAction="#handleCancelAction" layoutX="14.0" layoutY="378.0" mnemonicParsing="false" text="Annuler">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

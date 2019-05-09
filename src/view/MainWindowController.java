@@ -56,13 +56,11 @@ public class MainWindowController {
         Trottinette trottinette = trottinetteTable.getSelectionModel().getSelectedItem();
     }
 
-    /**
-     * Gives list of trottinette to the window
-     * @param trottinettes specified list
-     */
-
-    public MainWindowController(String username,ObservableList<Trottinette> trottinettes){
+    public void setUsername(String username){
         this.username.setText(username);
+    }
+
+    public void setTrottinettes(ObservableList<Trottinette> trottinettes){
         this.trottinettes = trottinettes;
     }
 

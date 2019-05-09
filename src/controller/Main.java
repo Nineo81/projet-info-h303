@@ -7,27 +7,26 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import model.CSVParser;
-import model.Database;
 import model.Trottinette;
 import view.ConnectionController;
 import view.InfoTrottiController;
 import view.MainWindowController;
+import view.RegisterController;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Main extends Application {
 
     private LoginPage loginPage;
     private MainWindowPage mainWindowPage;
+    private RegisterPage registerPage;
     private Stage window;
     private Stage subWindow;
     private String username;
     private String userType;
+
+    private Scene loginScene;
+    private Scene registerScene;
 
     @FXML
     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("../view/Connection.fxml"));
@@ -35,23 +34,21 @@ public class Main extends Application {
     FXMLLoader mainWindowLoader = new FXMLLoader(getClass().getResource("../view/MainWindow.fxml"));
     @FXML
     FXMLLoader infoTrottiLoader = new FXMLLoader(getClass().getResource("../view/InfoTrotti.fxml"));
+    @FXML
+    FXMLLoader registerLoader = new FXMLLoader(getClass().getResource("../view/Register.fxml"));
 
     public static void main(String[] args){
-        ArrayList<HashMap<String,String>> list = CSVParser.parsing("Database_Data/reloads.csv");
-        Database data = Database.getInstance();
-        data.open();
-        try {
-            System.out.println(data.checkUser(1000000, 8713));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         window = primaryStage;
-        window.setScene(createLoginScene());
+
+        loginScene = createLoginScene();
+        registerScene = createRegisterScene();
+
+        window.setScene(loginScene);
         window.show();
 
     }
@@ -68,6 +65,22 @@ public class Main extends Application {
         }
         ConnectionController controller = loginLoader.getController();
         controller.setLoginPage(loginPage);
+
+        return new Scene(content);
+    }
+
+    private Scene createRegisterScene(){
+        registerPage = new RegisterPage();
+        registerPage.setMain(this);
+
+        AnchorPane content = null;
+        try {
+            content = registerLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        RegisterController controller = registerLoader.getController();
+        controller.setRegisterPage(registerPage);
 
         return new Scene(content);
     }
@@ -90,16 +103,16 @@ public class Main extends Application {
         mainWindowPage = new MainWindowPage();
         mainWindowPage.setMain(this);
 
-        MainWindowController mainWindowController = new MainWindowController(username, trottinettes);
-        mainWindowController.setMainWindowPage(mainWindowPage);
-        mainWindowLoader.setController(mainWindowController);
-
         AnchorPane content = null;
         try {
             content = mainWindowLoader.load();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        MainWindowController controller = mainWindowLoader.getController();
+        controller.setMainWindowPage(mainWindowPage);
+        controller.setUsername(username);
 
         return new Scene(content);
     }
@@ -113,7 +126,19 @@ public class Main extends Application {
         subWindow.show();
     }
 
+    public void openRegister(){
+        window.setScene(registerScene);
+    }
+
+    public void openLogin(){
+        window.setScene(loginScene);
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username){
+        this.username = username;
     }
 }

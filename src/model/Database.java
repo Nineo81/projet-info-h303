@@ -205,17 +205,28 @@ public class Database {
         return list;
     }
 
-    public boolean checkUser(int UID, int password) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("SELECT UID, MOTDEPASSE FROM UTILISATEUR WHERE UID = ?");
+    public String[] checkUser(int UID, int password) throws SQLException {
+        String query = "SELECT UID, MOTDEPASSE, " +
+                       "CASE " +
+                         "WHEN EXISTS (" +
+                         "SELECT * FROM RECHARGEUR WHERE UTILISATEUR.UID = RECHARGEUR.UID ) " +
+                         "THEN 'yes' ELSE 'no' END AS ISARECHARGEUR "+
+                       "FROM UTILISATEUR WHERE UTILISATEUR.UID = ?";
+
+        PreparedStatement statement = conn.prepareStatement(query);
         statement.setInt(1, UID);
         ResultSet res = statement.executeQuery();
         res.next();
-        if (res.getInt("MOTDEPASSE") == password) {
+        if (res.getString("ISARECHARGEUR") == "no" && res.getInt("MOTDEPASSE") == password) {
             res.close();
-            return true;
-        } else {
+            return new String[]{String.valueOf(UID),"user"};
+        }
+        else if(res.getString("ISARECHARGEUR") == "yes" && res.getInt("MOTDEPASSE") == password){
             res.close();
-            return false;
+            return new String[]{Integer.toString(UID),"rechargeur"};
+        }else {
+            res.close();
+            return new String[]{Integer.toString(UID),"none"};
         }
     }
 

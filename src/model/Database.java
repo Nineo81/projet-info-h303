@@ -356,9 +356,9 @@ public class Database {
         PreparedStatement statement = conn.prepareStatement(
                 "SELECT RECHARGEUR.UID " +                  //Utilisateurs pour lesquels il n'existe pas de trottinettes
                         "FROM RECHARGEUR " +                       //rechargées mais pas utilisées
-                        "WHERE NOT EXISTS(SELECT *" +           //Recharges de trottinettes rechargées mais pas utilisées par un même utilisateur
+                        "WHERE UID NOT IN (SELECT RECHARGE.UID" +           //Recharges de trottinettes rechargées mais pas utilisées par un même utilisateur
                         "                  FROM RECHARGE" +
-                        "                  WHERE NOT EXISTS(SELECT *" +
+                        "                  WHERE NOT EXISTS(SELECT TRAJET.UID" +
                         "                                  FROM TRAJET" +
                         "                                  WHERE TRAJET.UID = RECHARGE.UID AND TRAJET.TID = RECHARGE.TID))");
         ResultSet res = statement.executeQuery();

@@ -561,17 +561,27 @@ public class Database {
     }
 
     public void updatePosition(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE" +
-                " SET POSITIONX = (SELECT DESTX" +
-                "                 FROM TRAJET" +
-                "                 WHERE TID = ? AND DATEFIN = (SELECT MAX(DATEFIN)" +
-                "                                              FROM TRAJET" +
-                "                                              WHERE TID = ?))," +
-                "    POSITIONY = (SELECT DESTY" +
-                "                 FROM TRAJET" +
-                "                 WHERE TID = ? AND DATEFIN = (SELECT MAX(DATEFIN)" +
-                "                                              FROM TRAJET" +
-                "                                              WHERE TID = ?))" +
+        System.out.println(TID);
+        PreparedStatement statement = conn.prepareStatement(
+                "UPDATE TROTTINETTE" +
+                " SET POSITIONX = (SELECT x" +
+                "                  FROM (SELECT TRAJET.TID as id, TRAJET.DateFin as datef, TRAJET.DestX as x FROM Trajet" +
+                "                        UNION" +
+                "                        SELECT RECHARGE.TID as id, RECHARGE.DateFin as datef, RECHARGE.DestX as x FROM RECHARGE) as HEHE" +
+                "                  WHERE id = ? AND datef = (SELECT MAX(datef)" +
+                "                                            FROM (SELECT TRAJET.TID as id, TRAJET.DateFin as datef FROM Trajet" +
+                "                                                  UNION" +
+                "                                                  SELECT RECHARGE.TID as id, RECHARGE.DateFin as datef FROM RECHARGE) as HAHA" +
+                "                                            WHERE id = ?))," +
+                "    POSITIONY = (SELECT y" +
+                "                FROM (SELECT TRAJET.TID as id, TRAJET.DateFin as datef, TRAJET.DestY as y FROM Trajet" +
+                "                      UNION" +
+                "                      SELECT RECHARGE.TID as id, RECHARGE.DateFin as datef, RECHARGE.DestY as y FROM RECHARGE) as HEHE" +
+                "                WHERE id = ? AND datef = (SELECT MAX(datef)" +
+                "                                          FROM (SELECT TRAJET.TID as id, TRAJET.DateFin as datef FROM Trajet" +
+                "                                                UNION" +
+                "                                                SELECT RECHARGE.TID as id, RECHARGE.DateFin as datef FROM RECHARGE) as HAHA" +
+                "                                          WHERE id = ?))" +
                 " WHERE TID = ?");
         for(int i = 1; i<6 ; i++) statement.setInt(i, TID);
         statement.execute();

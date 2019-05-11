@@ -48,7 +48,7 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) throws IOException, SQLException {
         window = primaryStage;
         subWindow = new Stage();
 
@@ -59,6 +59,13 @@ public class Main extends Application {
 
         window.setScene(loginScene);
         window.show();
+
+        System.out.println("debut");
+        Database db = Database.getInstance();
+        db.open();
+        for (int i = 0 ; i <= 600 ; i++) db.updatePosition(i);
+        db.close();
+        System.out.println("fini");
     }
 
     private Scene createLoginScene() {

@@ -11,7 +11,7 @@ public class LoginPage {
     /**
      * Handle the login action
      */
-    public void login(String username, String password) throws IOException {
+    public void login(String username, String password) {
         main.openMainWindow(FXCollections.observableArrayList());
     }
 

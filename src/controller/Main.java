@@ -41,7 +41,9 @@ public class Main extends Application {
         Database data = Database.getInstance();
         data.open();
         try {
-            System.out.println(data.getTravolder());
+            for(int TID = 1; TID<501;TID++){
+                data.updatePosition(TID);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -49,7 +51,7 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
         window = primaryStage;
         window.setScene(createLoginScene());
         window.show();

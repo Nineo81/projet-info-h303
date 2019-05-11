@@ -137,6 +137,7 @@ public class Database {
         statement.setString(8, "libre");
         statement.execute();
         statement.close();
+        updatePosition(Integer.parseInt(hmap.get("numero")));
     }
 
     public ArrayList<Trottinette> getTrottinette() throws SQLException {
@@ -416,5 +417,23 @@ public class Database {
         res.close();
         statement.close();
         return users;
+    }
+
+    public void updatePosition(int TID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE" +
+                " SET POSITIONX = (SELECT DESTX" +
+                "                 FROM TRAJET" +
+                "                 WHERE TID = ? AND DATEFIN = (SELECT MAX(DATEFIN)" +
+                "                                              FROM TRAJET" +
+                "                                              WHERE TID = ?))," +
+                "    POSITIONY = (SELECT DESTY" +
+                "                 FROM TRAJET" +
+                "                 WHERE TID = ? AND DATEFIN = (SELECT MAX(DATEFIN)" +
+                "                                              FROM TRAJET" +
+                "                                              WHERE TID = ?))" +
+                " WHERE TID = ?");
+        for(int i = 1; i<6 ; i++) statement.setInt(i, TID);
+        statement.execute();
+        statement.close();
     }
 }

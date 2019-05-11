@@ -30,6 +30,7 @@ public class LoginPage {
                 main.setUsername(result[0]);
                 main.openMainWindow(trottiListRechargeur(db));
             }
+            db.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

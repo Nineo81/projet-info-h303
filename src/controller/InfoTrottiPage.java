@@ -14,11 +14,13 @@ public class InfoTrottiPage {
     private Main main;
 
     public void complaint(int TID){
+        System.out.println(TID);
         Database db = Database.getInstance();
         db.open();
 
         try {
             db.introduceComplain(TID);
+            db.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -55,6 +57,7 @@ public class InfoTrottiPage {
             try {
                 db.insertRecharge(hmap);
                 db.stateUpdate("en charge", TID);
+                db.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
@@ -73,6 +76,7 @@ public class InfoTrottiPage {
                         destX,
                         destY);
                 db.stateUpdate("libre",TID);
+                db.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (ParseException e) {

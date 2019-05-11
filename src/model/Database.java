@@ -238,7 +238,8 @@ public class Database {
     }
 
     public void introduceComplain(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1, ETAT = 'défecteuse' WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1, ETAT = 'defecteuse' WHERE TID = ?");
+        statement.setInt(1, TID);
         statement.execute();
         statement.close();
     }
@@ -497,5 +498,11 @@ public class Database {
         res.close();
         statement.close();
         return users;
+    }
+
+    public void close() throws SQLException {
+        if(this.conn != null && !this.conn.isClosed()){
+            this.conn.close();
+        }
     }
 }

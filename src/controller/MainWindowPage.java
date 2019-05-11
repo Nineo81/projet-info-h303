@@ -24,6 +24,7 @@ public class MainWindowPage {
 
         try {
             list = db.getUserHistory(Integer.parseInt(main.getUsername()));
+            db.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -42,6 +43,7 @@ public class MainWindowPage {
         Trottinette trottinette = null;
         try {
             trottinette = db.getTrottinette(tID);
+            db.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -20,12 +20,14 @@ public class RegisterPage {
         if(newUser.containsKey("lastname")){
             try {
                 db.insertRechargeur(newUser);
+                db.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } else {
             try {
                 db.insertUtilisateur(newUser);
+                db.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

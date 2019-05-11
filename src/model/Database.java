@@ -140,7 +140,7 @@ public class Database {
     }
 
     public ArrayList<Trottinette> getTrottinette() throws SQLException {
-        ArrayList<Trottinette> trotis = new ArrayList<Trottinette>();
+        ArrayList<Trottinette> trotis = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM TROTTINETTE");
         ResultSet res = statement.executeQuery();
         while(res.next()) {

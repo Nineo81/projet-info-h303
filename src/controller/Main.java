@@ -7,11 +7,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import model.Path;
 import model.Trottinette;
-import view.ConnectionController;
-import view.InfoTrottiController;
-import view.MainWindowController;
-import view.RegisterController;
+import view.*;
 
 import java.io.IOException;
 
@@ -28,6 +26,7 @@ public class Main extends Application {
     private Scene loginScene;
     private Scene registerScene;
     private Scene infoTrottiScene;
+    private Scene historyScene;
 
     @FXML
     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("../view/Connection.fxml"));
@@ -37,6 +36,8 @@ public class Main extends Application {
     FXMLLoader infoTrottiLoader = new FXMLLoader(getClass().getResource("../view/InfoTrotti.fxml"));
     @FXML
     FXMLLoader registerLoader = new FXMLLoader(getClass().getResource("../view/Register.fxml"));
+    @FXML
+    FXMLLoader historyLoader = new FXMLLoader(getClass().getResource("../view/history.fxml"));
 
     public static void main(String[] args){
         launch(args);
@@ -50,6 +51,7 @@ public class Main extends Application {
         infoTrottiScene = createInfoTrottiScene();
         loginScene = createLoginScene();
         registerScene = createRegisterScene();
+        historyScene = createHIstory();
 
         window.setScene(loginScene);
         window.show();
@@ -84,6 +86,18 @@ public class Main extends Application {
         }
         RegisterController controller = registerLoader.getController();
         controller.setRegisterPage(registerPage);
+
+        return new Scene(content);
+    }
+
+    private Scene createHIstory(){
+        AnchorPane content = null;
+
+        try {
+            content = historyLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return new Scene(content);
     }
@@ -131,6 +145,14 @@ public class Main extends Application {
         controller.setUserType(userType);
 
         subWindow.setScene(infoTrottiScene);
+        subWindow.show();
+    }
+
+    public void openHistory(ObservableList<Path> pathList){
+        HistoryController controller = historyLoader.getController();
+        controller.setPathList(pathList);
+
+        subWindow.setScene(historyScene);
         subWindow.show();
     }
 

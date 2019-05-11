@@ -139,7 +139,7 @@ public class Database {
         statement.close();
     }
 
-    public ArrayList<Trottinette> getTrottinette() throws SQLException {
+    public ArrayList<Trottinette> getTrottinettes() throws SQLException {
         ArrayList<Trottinette> trotis = new ArrayList<Trottinette>();
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM TROTTINETTE");
         ResultSet res = statement.executeQuery();
@@ -353,9 +353,8 @@ public class Database {
         }
     }
 
-    public ArrayList<HashMap<String,String>> getUserHistory(int ID) throws SQLException {
-        ArrayList<HashMap<String,String>> trips  = new ArrayList<>();
-        HashMap<String, String> trip = new HashMap<>();
+    public ArrayList<Path> getUserHistory(int ID) throws SQLException {
+        ArrayList<Path> trips  = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement(
                 "SELECT SOURCEX, SOURCEY, DESTX, DESTY, DATEDEPART, DATEFIN " +
                     "FROM TRAJET " +
@@ -363,13 +362,13 @@ public class Database {
         statement.setInt(1,ID);
         ResultSet res = statement.executeQuery();
         while(res.next()) {
-            trip.put(" sourceX", String.valueOf(res.getDouble("sourceX")));
-            trip.put(" sourceY", String.valueOf(res.getDouble("sourceY")));
-            trip.put(" destinationX", String.valueOf(res.getDouble("destX")));
-            trip.put(" destinationY", String.valueOf(res.getDouble("destY")));
-            trip.put(" starttime", String.valueOf(res.getTimestamp("dateDepart")));
-            trip.put(" endtime", String.valueOf(res.getTimestamp("dateFin")));
-            trips.add(new HashMap<>(trip));
+            trips.add(new Path(
+                    String.valueOf(res.getDouble("sourceX")),
+                    String.valueOf(res.getDouble("sourceY")),
+                    String.valueOf(res.getDouble("destX")),
+                    String.valueOf(res.getDouble("destY")),
+                    String.valueOf(res.getTimestamp("dateDepart")),
+                    String.valueOf(res.getTimestamp("dateFin"))));
         }
         statement.close();
         res.close();

@@ -3,21 +3,21 @@ package model;
 public class Trottinette {
 
     private int TID;
-    private int dateService;
-    private int model;
+    private String dateService;
+    private String model;
     private int plaint;
     private int battery;
-    private int disponibility;
+    private String state;
     private int posX;
     private int posY;
 
-    public Trottinette(int TID, int dateService, int model, int plaint, int battery, int disponibility, int posX, int posY){
+    public Trottinette(int TID, String dateService, String model, int plaint, int battery, String state, int posX, int posY){
         this.TID = TID;
         this.dateService = dateService;
         this.model = model;
         this.plaint = plaint;
         this.battery = battery;
-        this.disponibility = disponibility;
+        this.state = state;
         this.posX = posX;
         this.posY = posY;
     }
@@ -30,19 +30,19 @@ public class Trottinette {
         this.TID = TID;
     }
 
-    public int getDateService() {
+    public String getDateService() {
         return dateService;
     }
 
-    public void setDateService(int dateService) {
+    public void setDateService(String dateService) {
         this.dateService = dateService;
     }
 
-    public int getModel() {
+    public String getModel() {
         return model;
     }
 
-    public void setModel(int model) {
+    public void setModel(String model) {
         this.model = model;
     }
 
@@ -62,12 +62,12 @@ public class Trottinette {
         this.battery = battery;
     }
 
-    public int getDisponibility() {
-        return disponibility;
+    public String getState() {
+        return state;
     }
 
-    public void setDisponibility(int disponibility) {
-        this.disponibility = disponibility;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public int getPosX() {

@@ -126,7 +126,7 @@ public class Database {
         java.sql.Timestamp sqlDate = new Timestamp(date.getTime());
         PreparedStatement statement = conn.prepareStatement("INSERT INTO " +
                 "TROTTINETTE(TID, DATESERVICE, MODELE, PLAINTE, BATTERIE" +
-                ", POSITIONX, POSITIONY, STATE)values(?,?,?,?,?,?,?,?)");
+                ", POSITIONX, POSITIONY, ETAT)values(?,?,?,?,?,?,?,?)");
         statement.setInt(1, Integer.parseInt(hmap.get("numero")));
         statement.setTimestamp(2, sqlDate);
         statement.setString(3, hmap.get(" modele"));
@@ -139,12 +139,37 @@ public class Database {
         statement.close();
     }
 
-    public ArrayList<Trottinette> getTrottinette() throws SQLException {
-        ArrayList<Trottinette> trotis = new ArrayList<>();
+    public Trottinette getTrottinette(int TID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement(
+                "SELECT * FROM TROTTINETTE WHERE TROTTINETTE.TID = ?");
+        statement.setInt(1, TID);
+        ResultSet res = statement.executeQuery();
+        res.next();
+
+        return new Trottinette(TID,
+                String.valueOf(res.getTimestamp("DATESERVICE")),
+                res.getString("MODELE"),
+                res.getInt("PLAINTE"),
+                res.getInt("BATTERIE"),
+                res.getString("ETAT"),
+                res.getInt("POSITIONX"),
+                res.getInt("POSITIONY"));
+    }
+
+    public ArrayList<Trottinette> getTrottinettes() throws SQLException {
+        ArrayList<Trottinette> trotis = new ArrayList<Trottinette>();
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM TROTTINETTE");
         ResultSet res = statement.executeQuery();
         while(res.next()) {
-            trotis.add(new Trottinette(res.getInt("TID"), res.getInt("DATESERVICE"), res.getInt("MODELE"), res.getInt("PLAINTE"), res.getInt("BATTERIE"), res.getInt("DISPONIBLE"), res.getInt("POSITIONX"), res.getInt("POSITIONY")));
+            trotis.add(new Trottinette(
+                    res.getInt("TID"),
+                    String.valueOf(res.getInt("DATESERVICE")),
+                    res.getString("MODELE"),
+                    res.getInt("PLAINTE"),
+                    res.getInt("BATTERIE"),
+                    res.getString("ETAT"),
+                    res.getInt("POSITIONX"),
+                    res.getInt("POSITIONY")));
         }
         return trotis;
     }
@@ -155,17 +180,49 @@ public class Database {
         statement.close();
     }
 
-    public ArrayList<HashMap<String, Integer>> getTrottinettesDispo() throws SQLException {
-        ArrayList<HashMap<String, Integer>> trottinettes = new ArrayList<>();
+    public ArrayList<Trottinette> getTrottinettesDispo() throws SQLException {
+        ArrayList<Trottinette> trottinettes = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement("SELECT TID, POSITIONX" +
-                ", POSITIONY FROM TROTTINETTE WHERE STATE = libre");
+                ", POSITIONY FROM TROTTINETTE WHERE ETAT = 'libre'");
         ResultSet res = statement.executeQuery();
         while(res.next()) {
-            HashMap<String, Integer> hmap = new HashMap<>();
-            hmap.put("TID", res.getInt("TID"));
-            hmap.put("POSITIONX", res.getInt("POSITIONX"));
-            hmap.put("POSITIONY", res.getInt("POSITIONY"));
-            trottinettes.add(hmap);
+            trottinettes.add(new Trottinette(
+                    res.getInt("TID"),
+                    "0",
+                    "0",
+                    0,
+                    0,
+                    "libre",
+                    res.getInt("POSITIONX"),
+                    res.getInt("POSITIONY")));
+        }
+        res.close();
+        return trottinettes;
+    }
+
+    public ArrayList<Trottinette> getTrottinettesRechargeur(int UID) throws SQLException {
+        ArrayList<Trottinette> trottinettes = new ArrayList<>();
+        PreparedStatement statement = conn.prepareStatement(
+                "SELECT TID, POSITIONX, POSITIONY, ETAT " +
+                "FROM TROTTINETTE " +
+                "WHERE ETAT = 'libre' " +
+                "UNION " +
+                "SELECT TID, POSITIONX,POSITIONY, ETAT " +
+                "FROM TROTTINETTE " +
+                "WHERE ETAT = 'en charge' AND " +
+                        "EXISTS(SELECT * FROM RECHARGE WHERE RECHARGE.UID = ?)");
+        statement.setInt(1, UID);
+        ResultSet res = statement.executeQuery();
+        while(res.next()) {
+            trottinettes.add(new Trottinette(
+                    res.getInt("TID"),
+                    "0",
+                    "0",
+                    0,
+                    0,
+                    res.getString("ETAT"),
+                    res.getInt("POSITIONX"),
+                    res.getInt("POSITIONY")));
         }
         res.close();
         return trottinettes;
@@ -181,7 +238,7 @@ public class Database {
     }
 
     public void introduceComplain(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1 WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1, ETAT = 'défecteuse' WHERE TID = " + TID);
         statement.execute();
         statement.close();
     }
@@ -193,7 +250,7 @@ public class Database {
     }
 
     public void stateUpdate(String newState, int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET STATE = " + newState + " WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET ETAT = " + newState + " WHERE TID = " + TID);
         statement.execute();
         statement.close();
     }
@@ -209,17 +266,28 @@ public class Database {
         return list;
     }
 
-    public boolean checkUser(int UID, int password) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("SELECT UID, MOTDEPASSE FROM UTILISATEUR WHERE UID = ?");
+    public String[] checkUser(int UID, int password) throws SQLException {
+        String query = "SELECT UID, MOTDEPASSE, " +
+                       "CASE " +
+                         "WHEN EXISTS (" +
+                         "SELECT * FROM RECHARGEUR WHERE UTILISATEUR.UID = RECHARGEUR.UID ) " +
+                         "THEN 'yes' ELSE 'no' END AS ISARECHARGEUR "+
+                       "FROM UTILISATEUR WHERE UTILISATEUR.UID = ?";
+
+        PreparedStatement statement = conn.prepareStatement(query);
         statement.setInt(1, UID);
         ResultSet res = statement.executeQuery();
         res.next();
-        if (res.getInt("MOTDEPASSE") == password) {
+        if (res.getString("ISARECHARGEUR") == "no" && res.getInt("MOTDEPASSE") == password) {
             res.close();
-            return true;
-        } else {
+            return new String[]{String.valueOf(UID),"user"};
+        }
+        else if(res.getString("ISARECHARGEUR") == "yes" && res.getInt("MOTDEPASSE") == password){
             res.close();
-            return false;
+            return new String[]{Integer.toString(UID),"rechargeur"};
+        }else {
+            res.close();
+            return new String[]{Integer.toString(UID),"none"};
         }
     }
 
@@ -269,6 +337,26 @@ public class Database {
         statement.setTimestamp(10, end);
         statement.execute();
 
+    }
+
+    public void endCharge(int TID, int UID, String endTime, Double destX, Double destY) throws SQLException, ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = formatter.parse(endTime);
+        Timestamp end = new Timestamp(date.getTime());
+
+        PreparedStatement statement = this.conn.prepareStatement(
+                "UPDATE RECHARGE " +
+                        "SET DATEFIN = ?, " +
+                        "CHARGEF = 4, " +
+                        "DESTX = ?, " +
+                        "DESTY = ? " +
+                        "WHERE UID = ? AND TID = ?");
+        statement.setTimestamp(1,end);
+        statement.setDouble(2,destX);
+        statement.setDouble(3,destY);
+        statement.setInt(4,UID);
+        statement.setInt(5,TID);
+        statement.execute();
     }
 
     public void insertIntervention(HashMap<String, String> Intervention) throws SQLException, ParseException {
@@ -342,9 +430,8 @@ public class Database {
         }
     }
 
-    public ArrayList<HashMap<String,String>> getUserHistory(int ID) throws SQLException {
-        ArrayList<HashMap<String,String>> trips  = new ArrayList<>();
-        HashMap<String, String> trip = new HashMap<>();
+    public ArrayList<Path> getUserHistory(int ID) throws SQLException {
+        ArrayList<Path> trips  = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement(
                 "SELECT SOURCEX, SOURCEY, DESTX, DESTY, DATEDEPART, DATEFIN " +
                     "FROM TRAJET " +
@@ -352,13 +439,13 @@ public class Database {
         statement.setInt(1,ID);
         ResultSet res = statement.executeQuery();
         while(res.next()) {
-            trip.put(" sourceX", String.valueOf(res.getDouble("sourceX")));
-            trip.put(" sourceY", String.valueOf(res.getDouble("sourceY")));
-            trip.put(" destinationX", String.valueOf(res.getDouble("destX")));
-            trip.put(" destinationY", String.valueOf(res.getDouble("destY")));
-            trip.put(" starttime", String.valueOf(res.getTimestamp("dateDepart")));
-            trip.put(" endtime", String.valueOf(res.getTimestamp("dateFin")));
-            trips.add(new HashMap<>(trip));
+            trips.add(new Path(
+                    String.valueOf(res.getDouble("sourceX")),
+                    String.valueOf(res.getDouble("sourceY")),
+                    String.valueOf(res.getDouble("destX")),
+                    String.valueOf(res.getDouble("destY")),
+                    String.valueOf(res.getTimestamp("dateDepart")),
+                    String.valueOf(res.getTimestamp("dateFin"))));
         }
         statement.close();
         res.close();

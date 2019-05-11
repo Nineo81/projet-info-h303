@@ -1,11 +1,16 @@
 package view;
 
+import controller.InfoTrottiPage;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 
 
 public class InfoTrottiController {
+
+    private InfoTrottiPage infoTrottiPage;
 
     @FXML
     private Label number;
@@ -17,12 +22,43 @@ public class InfoTrottiController {
     private Label complaint;
 
     @FXML
+    private TextField posXTextField;
+
+    @FXML
+    private TextField posYTextField;
+
+    @FXML
+    private Text posXText;
+
+    @FXML
+    private Text posYText;
+
+    @FXML
     private Button recharge;
 
-    public InfoTrottiController(String number, int battery, int complaint, String userType){
+    @FXML
+    private void handleComplaintAction(){
+        infoTrottiPage.complaint(Integer.parseInt(number.getText()));
+    }
+
+    @FXML
+    private void handleRechargeAction(){
+        infoTrottiPage.charging(Integer.parseInt(number.getText()),Double.parseDouble(posXTextField.getText()),Double.parseDouble(posYTextField.getText()));
+    }
+
+    public void setNumber(String number){
         this.number.setText(number);
+    }
+
+    public void setBattery(int battery){
         this.battery.setText(String.valueOf(battery));
+    }
+
+    public void setComplaint(int complaint){
         this.complaint.setText(String.valueOf(complaint));
+    }
+
+    public void setUserType(String userType){
         if(userType.equals("rechargeur")){
             this.recharge.setVisible(true);
         }
@@ -31,13 +67,21 @@ public class InfoTrottiController {
         }
     }
 
-    @FXML
-    private void handleComplaintAction(){
-
+    public void setPos(String state){
+        if(state.equals("libre")){
+            posXText.setVisible(false);
+            posYText.setVisible(false);
+            posXTextField.setVisible(false);
+            posYTextField.setVisible(false);
+        } else if(state.equals("en charge")){
+            posXText.setVisible(true);
+            posYText.setVisible(true);
+            posXTextField.setVisible(true);
+            posYTextField.setVisible(true);
+        }
     }
 
-    @FXML
-    private void handleRechargeAction(){
-
+    public void setInfoTrottiPage(InfoTrottiPage infoTrottiPage){
+        this.infoTrottiPage = infoTrottiPage;
     }
 }

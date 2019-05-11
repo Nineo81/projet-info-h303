@@ -296,6 +296,21 @@ public class Database {
 
     }
 
+    public int getTravolder() throws SQLException {
+        ArrayList<Integer> list = new ArrayList<>();
+        PreparedStatement statement = conn.prepareStatement("SELECT TID " +
+                "From TRAJET " +
+                "GROUP BY TID " +
+                "ORDER BY SUM(SQRT((DESTX - SOURCEX)*(DESTX - SOURCEX)+(DESTY - SOURCEY)*(DESTY - SOURCEY))) DESC " +
+                "FETCH FIRST ROW ONLY;");
+        ResultSet res = statement.executeQuery();
+        while(res.next()) {
+            list.add(res.getInt(1));
+        }
+        res.close();
+        return list.size();
+    }
+
     public void init() throws SQLException, ParseException {
         ArrayList<HashMap<String,String>> reloads = CSVParser.parsing("Database_Data/reloads.csv");
         ArrayList<HashMap<String,String>> reparations = CSVParser.parsing("Database_Data/reparations.csv");

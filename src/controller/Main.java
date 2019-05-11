@@ -130,6 +130,8 @@ public class Main extends Application {
         controller.setMainWindowPage(mainWindowPage);
         controller.setTrottinettes(trottinettes);
         controller.setUsername(username);
+        controller.setUserType(userType);
+        controller.showStateColumn();
 
         return new Scene(content);
     }

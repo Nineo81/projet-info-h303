@@ -33,6 +33,20 @@ public class LoginPage {
             db.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (NumberFormatException e){
+            try {
+                String res = db.checkTech(username, Integer.parseInt(password));
+                if(res.equals("none")){
+                    //alert message
+                } else {
+                    main.setUserType("technicien");
+                    main.setUsername(res);
+                    main.openMainWindow(trottiListTechnicien(db));
+                }
+                db.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
@@ -41,6 +55,17 @@ public class LoginPage {
 
         try {
             list.addAll(db.getTrottinettesDispo());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    private ObservableList<Trottinette> trottiListTechnicien(Database db){
+        ObservableList<Trottinette> list = FXCollections.observableArrayList();
+
+        try {
+            list.addAll(db.getTrottinettes());
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -18,8 +19,13 @@ public class MainWindowController {
 
     private MainWindowPage mainWindowPage;
 
+    private String userType;
+
     @FXML
     private Label username;
+
+    @FXML
+    private Button button;
 
     @FXML
     private TableView<Trottinette> trottinetteTable;
@@ -28,7 +34,13 @@ public class MainWindowController {
     private TableColumn<Trottinette, Integer> trottinette;
 
     @FXML
-    private TableColumn<Trottinette, Integer> position;
+    private TableColumn<Trottinette, Double> posX;
+
+    @FXML
+    private TableColumn<Trottinette, Double> posY;
+
+    @FXML
+    private TableColumn<Trottinette, String> state;
 
     /**
      * Initialize window and specify column content
@@ -38,7 +50,9 @@ public class MainWindowController {
     private void initialize(){
         //Specify column content
         trottinette.setCellValueFactory(new PropertyValueFactory<>("TID"));
-        position.setCellValueFactory(new PropertyValueFactory<>("posX"));
+        posX.setCellValueFactory(new PropertyValueFactory<>("posX"));
+        posY.setCellValueFactory(new PropertyValueFactory<>("posY"));
+        state.setCellValueFactory(new PropertyValueFactory<>("state"));
 
         trottinetteTable.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -51,8 +65,14 @@ public class MainWindowController {
     }
 
     @FXML
-    private void handleHistoryAction(){
-        mainWindowPage.historyAccess();
+    private void handleButtonAction(){
+        if(userType.equals("technicien")){
+            button.setText("Utilisateur");
+
+        } else {
+            button.setText("Historique");
+            mainWindowPage.historyAccess();
+        }
     }
 
     /**
@@ -65,6 +85,18 @@ public class MainWindowController {
 
     public void setUsername(String username){
         this.username.setText(username);
+    }
+
+    public void setUserType(String userType){
+        this.userType = userType;
+    }
+
+    public void showStateColumn(){
+        if(userType.equals("technicien")){
+            state.setVisible(true);
+        } else{
+            state.setVisible(false);
+        }
     }
 
     public void setTrottinettes(ObservableList<Trottinette> trottinettes){

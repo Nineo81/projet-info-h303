@@ -1,5 +1,7 @@
 package model;
 
+import controller.User;
+
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -152,8 +154,8 @@ public class Database {
                 res.getInt("PLAINTE"),
                 res.getInt("BATTERIE"),
                 res.getString("ETAT"),
-                res.getInt("POSITIONX"),
-                res.getInt("POSITIONY"));
+                res.getDouble("POSITIONX"),
+                res.getDouble("POSITIONY"));
     }
 
     public ArrayList<Trottinette> getTrottinettes() throws SQLException {
@@ -163,19 +165,20 @@ public class Database {
         while(res.next()) {
             trotis.add(new Trottinette(
                     res.getInt("TID"),
-                    String.valueOf(res.getInt("DATESERVICE")),
+                    String.valueOf(res.getTimestamp("DATESERVICE")),
                     res.getString("MODELE"),
                     res.getInt("PLAINTE"),
                     res.getInt("BATTERIE"),
                     res.getString("ETAT"),
-                    res.getInt("POSITIONX"),
-                    res.getInt("POSITIONY")));
+                    res.getDouble("POSITIONX"),
+                    res.getDouble("POSITIONY")));
         }
         return trotis;
     }
 
     public void deleteTrottinette(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("DELETE FROM TROTTINETTE WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("DELETE FROM TROTTINETTE WHERE TID = ?");
+        statement.setInt(1,TID);
         statement.execute();
         statement.close();
     }
@@ -193,8 +196,8 @@ public class Database {
                     0,
                     0,
                     "libre",
-                    res.getInt("POSITIONX"),
-                    res.getInt("POSITIONY")));
+                    res.getDouble("POSITIONX"),
+                    res.getDouble("POSITIONY")));
         }
         res.close();
         return trottinettes;
@@ -221,8 +224,8 @@ public class Database {
                     0,
                     0,
                     res.getString("ETAT"),
-                    res.getInt("POSITIONX"),
-                    res.getInt("POSITIONY")));
+                    res.getDouble("POSITIONX"),
+                    res.getDouble("POSITIONY")));
         }
         res.close();
         return trottinettes;
@@ -291,6 +294,24 @@ public class Database {
         }else {
             res.close();
             return new String[]{Integer.toString(UID),"none"};
+        }
+    }
+
+    public String checkTech(String TID, int password) throws SQLException {
+        String query = "SELECT TECHID, MOTDEPASSE " +
+                       "FROM TECHNICIEN " +
+                       "WHERE TECHID = ?";
+
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.setString(1, TID);
+        ResultSet res = statement.executeQuery();
+        res.next();
+
+        if(res.getInt("MOTDEPASSE") == password){
+            return TID;
+        }
+        else{
+            return "none";
         }
     }
 
@@ -431,6 +452,21 @@ public class Database {
         for(HashMap<String, String> hmap : reparations){
            insertIntervention(hmap);
         }
+    }
+
+    public ArrayList<User> getUsers() throws SQLException {
+        ArrayList<User> userList = new ArrayList<>();
+        String query = "SELECT * FROM UTILISATEUR U " +
+                "LEFT OUTER JOIN RECHARGEUR R ON U.UID = R.UID";
+
+        PreparedStatement statement = this.conn.prepareStatement(query);
+        ResultSet res = statement.executeQuery();
+        while(res.next()){
+            userList.add(new User(res.getInt("UID"),
+                    res.getInt("MOTDEPASSE"),
+                    res.getLong("COMPTE")));
+        }
+        return userList;
     }
 
     public ArrayList<Path> getUserHistory(int ID) throws SQLException {

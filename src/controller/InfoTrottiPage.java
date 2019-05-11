@@ -49,8 +49,8 @@ public class InfoTrottiPage {
             hmap.put(" user",main.getUsername());
             hmap.put(" initialLoad", Integer.toString(trotti.getBattery()));
             hmap.put(" finalLoad", "0");
-            hmap.put(" sourceX", Integer.toString(trotti.getPosX()));
-            hmap.put(" sourceY", Integer.toString(trotti.getPosY()));
+            hmap.put(" sourceX", Double.toString(trotti.getPosX()));
+            hmap.put(" sourceY", Double.toString(trotti.getPosY()));
             hmap.put(" destinationX", "0");
             hmap.put(" destinationY", "0");
 

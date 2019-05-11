@@ -35,6 +35,10 @@ public class MainWindowPage {
         main.openHistory(pathList);
     }
 
+    public void userAccess(){
+
+    }
+
     public void trottiAccess(int tID){
 
         Database db = Database.getInstance();

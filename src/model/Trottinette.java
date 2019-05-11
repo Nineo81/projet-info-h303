@@ -8,10 +8,10 @@ public class Trottinette {
     private int plaint;
     private int battery;
     private String state;
-    private int posX;
-    private int posY;
+    private Double posX;
+    private Double posY;
 
-    public Trottinette(int TID, String dateService, String model, int plaint, int battery, String state, int posX, int posY){
+    public Trottinette(int TID, String dateService, String model, int plaint, int battery, String state, Double posX, Double posY){
         this.TID = TID;
         this.dateService = dateService;
         this.model = model;
@@ -70,19 +70,19 @@ public class Trottinette {
         this.state = state;
     }
 
-    public int getPosX() {
+    public Double getPosX() {
         return posX;
     }
 
-    public void setPosX(int posX) {
+    public void setPosX(Double posX) {
         this.posX = posX;
     }
 
-    public int getPosY() {
+    public Double getPosY() {
         return posY;
     }
 
-    public void setPosY(int posY) {
+    public void setPosY(Double posY) {
         this.posY = posY;
     }
 }

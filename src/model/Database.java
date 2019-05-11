@@ -137,6 +137,7 @@ public class Database {
         statement.setString(8, "libre");
         statement.execute();
         statement.close();
+        updatePosition(Integer.parseInt(hmap.get("numero")));
     }
 
     public Trottinette getTrottinette(int TID) throws SQLException {
@@ -175,7 +176,8 @@ public class Database {
     }
 
     public void deleteTrottinette(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("DELETE FROM TROTTINETTE WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("DELETE FROM TROTTINETTE WHERE TID = ?");
+        statement.setInt(1, TID);
         statement.execute();
         statement.close();
     }
@@ -229,7 +231,8 @@ public class Database {
     }
 
     public int getBattery(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("SELECT BATTERIE FROM TROTTINETTE WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("SELECT BATTERIE FROM TROTTINETTE WHERE TID = ?");
+        statement.setInt(1, TID);
         ResultSet res = statement.executeQuery();
         res.next();
         int charge = res.getInt("BATTERIE");
@@ -238,13 +241,15 @@ public class Database {
     }
 
     public void introduceComplain(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1, ETAT = 'défecteuse' WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1 WHERE TID = ?");
+        statement.setInt(1, TID);
         statement.execute();
         statement.close();
     }
 
     public void clearComplain(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = 0 WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = 0 WHERE TID = ?");
+        statement.setInt(1, TID);
         statement.execute();
         statement.close();
     }
@@ -497,5 +502,23 @@ public class Database {
         res.close();
         statement.close();
         return users;
+    }
+
+    public void updatePosition(int TID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE" +
+                " SET POSITIONX = (SELECT DESTX" +
+                "                 FROM TRAJET" +
+                "                 WHERE TID = ? AND DATEFIN = (SELECT MAX(DATEFIN)" +
+                "                                              FROM TRAJET" +
+                "                                              WHERE TID = ?))," +
+                "    POSITIONY = (SELECT DESTY" +
+                "                 FROM TRAJET" +
+                "                 WHERE TID = ? AND DATEFIN = (SELECT MAX(DATEFIN)" +
+                "                                              FROM TRAJET" +
+                "                                              WHERE TID = ?))" +
+                " WHERE TID = ?");
+        for(int i = 1; i<6 ; i++) statement.setInt(i, TID);
+        statement.execute();
+        statement.close();
     }
 }

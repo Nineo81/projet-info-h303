@@ -150,7 +150,8 @@ public class Database {
     }
 
     public void deleteTrottinette(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("DELETE FROM TROTTINETTE WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("DELETE FROM TROTTINETTE WHERE TID = ?");
+        statement.setInt(1, TID);
         statement.execute();
         statement.close();
     }
@@ -172,7 +173,8 @@ public class Database {
     }
 
     public int getBattery(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("SELECT BATTERIE FROM TROTTINETTE WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("SELECT BATTERIE FROM TROTTINETTE WHERE TID = ?");
+        statement.setInt(1, TID);
         ResultSet res = statement.executeQuery();
         res.next();
         int charge = res.getInt("BATTERIE");
@@ -181,19 +183,23 @@ public class Database {
     }
 
     public void introduceComplain(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1 WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1 WHERE TID = ?");
+        statement.setInt(1, TID);
         statement.execute();
         statement.close();
     }
 
     public void clearComplain(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = 0 WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = 0 WHERE TID = ?");
+        statement.setInt(1, TID);
         statement.execute();
         statement.close();
     }
 
     public void stateUpdate(String newState, int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET STATE = " + newState + " WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET STATE = ? WHERE TID = ?");
+        statement.setString(1, newState);
+        statement.setInt(2, TID);
         statement.execute();
         statement.close();
     }

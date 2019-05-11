@@ -26,7 +26,7 @@ public class InfoTrottiPage {
         }
     }
 
-    public void charging(int TID, Double destX, Double destY){
+    public void charging(int TID, String destX, String destY){
         Database db = Database.getInstance();
         db.open();
         Trottinette trotti = null;
@@ -52,7 +52,7 @@ public class InfoTrottiPage {
             hmap.put(" sourceX", Integer.toString(trotti.getPosX()));
             hmap.put(" sourceY", Integer.toString(trotti.getPosY()));
             hmap.put(" destinationX", "0");
-            hmap.put(" destinatinoY", "0");
+            hmap.put(" destinationY", "0");
 
             try {
                 db.insertRecharge(hmap);
@@ -73,8 +73,8 @@ public class InfoTrottiPage {
                         TID,
                         Integer.parseInt(main.getUsername()),
                         formatter.format(date),
-                        destX,
-                        destY);
+                        Double.parseDouble(destX),
+                        Double.parseDouble(destY));
                 db.stateUpdate("libre",TID);
                 db.close();
             } catch (SQLException e) {

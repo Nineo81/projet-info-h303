@@ -251,7 +251,9 @@ public class Database {
     }
 
     public void stateUpdate(String newState, int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET ETAT = " + newState + " WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET ETAT = ? WHERE TID = ?");
+        statement.setString(1, newState);
+        statement.setInt(2, TID);
         statement.execute();
         statement.close();
     }

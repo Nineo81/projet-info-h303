@@ -43,7 +43,7 @@ public class InfoTrottiController {
 
     @FXML
     private void handleRechargeAction(){
-        infoTrottiPage.charging(Integer.parseInt(number.getText()),Double.parseDouble(posXTextField.getText()),Double.parseDouble(posYTextField.getText()));
+        infoTrottiPage.charging(Integer.parseInt(number.getText()),posXTextField.getText(),posYTextField.getText());
     }
 
     public void setNumber(String number){

@@ -7,14 +7,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import model.CSVParser;
-import model.Database;
-import model.Path;
-import model.Trottinette;
+import model.*;
 import view.*;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class Main extends Application {
 
@@ -22,8 +18,12 @@ public class Main extends Application {
     private MainWindowPage mainWindowPage;
     private RegisterPage registerPage;
     private InfoTrottiPage infoTrottiPage;
+    private UserPage userPage;
+    private ManageTrottiPage manageTrottiPage;
+
     private Stage window;
     private Stage subWindow;
+
     private String username;
     private String userType;
 
@@ -31,6 +31,8 @@ public class Main extends Application {
     private Scene registerScene;
     private Scene infoTrottiScene;
     private Scene historyScene;
+    private Scene userListScene;
+    private Scene manageTrottiScene;
 
     @FXML
     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("../view/Connection.fxml"));
@@ -41,7 +43,11 @@ public class Main extends Application {
     @FXML
     FXMLLoader registerLoader = new FXMLLoader(getClass().getResource("../view/Register.fxml"));
     @FXML
-    FXMLLoader historyLoader = new FXMLLoader(getClass().getResource("../view/history.fxml"));
+    FXMLLoader historyLoader = new FXMLLoader(getClass().getResource("../view/History.fxml"));
+    @FXML
+    FXMLLoader userListLoader = new FXMLLoader(getClass().getResource("../view/UserList.fxml"));
+    @FXML
+    FXMLLoader manageTrottiLoader = new FXMLLoader(getClass().getResource("../view/ManageTrotti.fxml"));
 
     public static void main(String[] args){
         launch(args);
@@ -56,6 +62,8 @@ public class Main extends Application {
         loginScene = createLoginScene();
         registerScene = createRegisterScene();
         historyScene = createHIstory();
+        userListScene = createUserScene();
+        manageTrottiScene = createManageTrottiScene();
 
         window.setScene(loginScene);
         window.show();
@@ -117,6 +125,39 @@ public class Main extends Application {
         return new Scene(content);
     }
 
+    private Scene createUserScene(){
+        userPage = new UserPage();
+        userPage.setMain(this);
+
+        AnchorPane content = null;
+        try {
+            content = userListLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        UserListController controller = userListLoader.getController();
+        controller.setUserPage(userPage);
+
+        return new Scene(content);
+    }
+
+    private Scene createManageTrottiScene(){
+        manageTrottiPage = new ManageTrottiPage();
+        manageTrottiPage.setMain(this);
+
+        AnchorPane content = null;
+        try {
+            content = manageTrottiLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ManageTrottiController controller = manageTrottiLoader.getController();
+        controller.setManageTrottiPage(manageTrottiPage);
+
+        return new Scene(content);
+    }
+
     private Scene createMainWindowScene(ObservableList<Trottinette> trottinettes) {
         mainWindowPage = new MainWindowPage();
         mainWindowPage.setMain(this);
@@ -138,8 +179,25 @@ public class Main extends Application {
         return new Scene(content);
     }
 
+    public void openManageTrotti(String state, int TID){
+        ManageTrottiController controller = manageTrottiLoader.getController();
+        controller.setInitialCB(state);
+        controller.setNumber(TID);
+
+        subWindow.setScene(manageTrottiScene);
+        subWindow.show();
+    }
+
     public void openMainWindow(ObservableList<Trottinette> trottinettes) {
         window.setScene(createMainWindowScene(trottinettes));
+    }
+
+    public void openUserList(ObservableList<User> users){
+        UserListController controller = userListLoader.getController();
+        controller.setUserList(users);
+
+        subWindow.setScene(userListScene);
+        subWindow.show();
     }
 
     public void openInfoTrotti(String number, int battery, int complaint, String state){
@@ -164,6 +222,13 @@ public class Main extends Application {
 
         subWindow.setScene(historyScene);
         subWindow.show();
+    }
+
+    public void openUser(int username, int password, long account){
+        RegisterController controller = registerLoader.getController();
+        controller.presettingUser(username, password, account);
+
+        subWindow.setScene(registerScene);
     }
 
     public void openRegister(){

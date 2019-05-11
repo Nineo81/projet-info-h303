@@ -68,7 +68,7 @@ public class MainWindowController {
     private void handleButtonAction(){
         if(userType.equals("technicien")){
             button.setText("Utilisateur");
-
+            mainWindowPage.userAccess();
         } else {
             button.setText("Historique");
             mainWindowPage.historyAccess();
@@ -80,7 +80,7 @@ public class MainWindowController {
      */
 
     private void clickTrotti(int tID){
-        mainWindowPage.trottiAccess(tID);
+        mainWindowPage.trottiAccess(tID, userType);
     }
 
     public void setUsername(String username){

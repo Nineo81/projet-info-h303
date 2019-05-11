@@ -1,17 +1,11 @@
 package model;
 
-import controller.User;
-
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 public class Database {
     private String CONNECTION_URL = "jdbc:derby:" + "Database" + ";create=false";
@@ -471,7 +465,7 @@ public class Database {
     public ArrayList<User> getUsers() throws SQLException {
         ArrayList<User> userList = new ArrayList<>();
         String query = "SELECT * FROM UTILISATEUR U " +
-                "LEFT OUTER JOIN RECHARGEUR R ON U.UID = R.UID";
+                "WHERE U.UID NOT IN (SELECT UID FROM RECHARGEUR)";
 
         PreparedStatement statement = this.conn.prepareStatement(query);
         ResultSet res = statement.executeQuery();

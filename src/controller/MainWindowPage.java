@@ -14,7 +14,7 @@ public class MainWindowPage {
     }
 
     public void trottiAccess(Trottinette trottinette){
-        main.openInfoTrotti(trottinette.getBattery(),trottinette.getPlaint());
+        main.openInfoTrotti(Integer.toString(trottinette.getTID()),trottinette.getBattery(),trottinette.getPlaint());
     }
 
     public void setMain(Main main){

@@ -27,6 +27,7 @@ public class Main extends Application {
 
     private Scene loginScene;
     private Scene registerScene;
+    private Scene infoTrottiScene;
 
     @FXML
     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("../view/Connection.fxml"));
@@ -44,7 +45,9 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         window = primaryStage;
+        subWindow = new Stage();
 
+        infoTrottiScene = createInfoTrottiScene();
         loginScene = createLoginScene();
         registerScene = createRegisterScene();
 
@@ -85,9 +88,7 @@ public class Main extends Application {
         return new Scene(content);
     }
 
-    private Scene createInfoTrottiScene(String number, int battery, int complaint){
-        InfoTrottiController infoTrottiController = new InfoTrottiController(number, battery, complaint,userType);
-        infoTrottiLoader.setController(infoTrottiController);
+    private Scene createInfoTrottiScene(){
 
         AnchorPane content = null;
         try {
@@ -122,8 +123,14 @@ public class Main extends Application {
         window.setScene(createMainWindowScene(trottinettes));
     }
 
-    public void openInfoTrotti(int battery, int complaint){
-        subWindow.setScene(createInfoTrottiScene(username, battery, complaint));
+    public void openInfoTrotti(String number, int battery, int complaint){
+        InfoTrottiController controller = infoTrottiLoader.getController();
+        controller.setBattery(battery);
+        controller.setComplaint(complaint);
+        controller.setNumber(number);
+        controller.setUserType(userType);
+
+        subWindow.setScene(infoTrottiScene);
         subWindow.show();
     }
 
@@ -141,5 +148,9 @@ public class Main extends Application {
 
     public void setUsername(String username){
         this.username = username;
+    }
+
+    public void setUserType(String userType){
+        this.userType = userType;
     }
 }

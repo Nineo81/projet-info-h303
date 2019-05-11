@@ -23,9 +23,11 @@ public class LoginPage {
         try {
             String[] result = db.checkUser(Integer.parseInt(username),Integer.parseInt(password));
             if(result[1].equals("user")){
+                main.setUserType("user");
                 main.setUsername(result[0]);
                 main.openMainWindow(trottiList(db));
             } else if(result.equals("rechargeur")){
+                main.setUserType("rechargeur");
                 main.setUsername(result[0]);
                 main.openMainWindow(FXCollections.observableArrayList());
             }

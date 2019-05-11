@@ -112,7 +112,7 @@ public class RegisterController {
             newUser.put("number",numberTextField.getText());
         }
         else{
-            //TO DO: alert maessage no checkBox selected
+            //TO DO: alert message no checkBox selected
         }
         registerPage.register(newUser);
     }

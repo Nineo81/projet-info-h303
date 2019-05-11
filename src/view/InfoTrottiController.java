@@ -19,18 +19,6 @@ public class InfoTrottiController {
     @FXML
     private Button recharge;
 
-    public InfoTrottiController(String number, int battery, int complaint, String userType){
-        this.number.setText(number);
-        this.battery.setText(String.valueOf(battery));
-        this.complaint.setText(String.valueOf(complaint));
-        if(userType.equals("rechargeur")){
-            this.recharge.setVisible(true);
-        }
-        else{
-            this.recharge.setVisible(false);
-        }
-    }
-
     @FXML
     private void handleComplaintAction(){
 
@@ -39,5 +27,26 @@ public class InfoTrottiController {
     @FXML
     private void handleRechargeAction(){
 
+    }
+
+    public void setNumber(String number){
+        this.number.setText(number);
+    }
+
+    public void setBattery(int battery){
+        this.battery.setText(String.valueOf(battery));
+    }
+
+    public void setComplaint(int complaint){
+        this.complaint.setText(String.valueOf(complaint));
+    }
+
+    public void setUserType(String userType){
+        if(userType.equals("rechargeur")){
+            this.recharge.setVisible(true);
+        }
+        else{
+            this.recharge.setVisible(false);
+        }
     }
 }

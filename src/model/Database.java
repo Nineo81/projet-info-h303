@@ -297,18 +297,17 @@ public class Database {
     }
 
     public int getTravolder() throws SQLException {
-        ArrayList<Integer> list = new ArrayList<>();
+        int output;
         PreparedStatement statement = conn.prepareStatement("SELECT TID " +
                 "From TRAJET " +
                 "GROUP BY TID " +
                 "ORDER BY SUM(SQRT((DESTX - SOURCEX)*(DESTX - SOURCEX)+(DESTY - SOURCEY)*(DESTY - SOURCEY))) DESC " +
-                "FETCH FIRST ROW ONLY;");
+                "FETCH FIRST ROW ONLY");
         ResultSet res = statement.executeQuery();
-        while(res.next()) {
-            list.add(res.getInt(1));
-        }
+        res.next();
+        output = res.getInt("TID");
         res.close();
-        return list.size();
+        return output;
     }
 
     public void init() throws SQLException, ParseException {
@@ -371,9 +370,9 @@ public class Database {
         PreparedStatement statement = conn.prepareStatement(
                 "SELECT RECHARGEUR.UID " +                  //Utilisateurs pour lesquels il n'existe pas de trottinettes
                         "FROM RECHARGEUR " +                       //rechargées mais pas utilisées
-                        "WHERE NOT EXISTS(SELECT *" +           //Recharges de trottinettes rechargées mais pas utilisées par un même utilisateur
+                        "WHERE UID NOT IN (SELECT RECHARGE.UID" +           //Recharges de trottinettes rechargées mais pas utilisées par un même utilisateur
                         "                  FROM RECHARGE" +
-                        "                  WHERE NOT EXISTS(SELECT *" +
+                        "                  WHERE NOT EXISTS(SELECT TRAJET.UID" +
                         "                                  FROM TRAJET" +
                         "                                  WHERE TRAJET.UID = RECHARGE.UID AND TRAJET.TID = RECHARGE.TID))");
         ResultSet res = statement.executeQuery();

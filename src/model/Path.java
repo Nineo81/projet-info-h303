@@ -18,4 +18,28 @@ public class Path {
         this.startTime = startTime;
         this.endTime = endTime;
     }
+
+    public String getSourceX() {
+        return sourceX;
+    }
+
+    public String getSourceY() {
+        return sourceY;
+    }
+
+    public String getDestinationX() {
+        return destinationX;
+    }
+
+    public String getDestinationY() {
+        return destinationY;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
 }

@@ -41,7 +41,7 @@ public class LoginPage {
 
         try {
             for(HashMap<String, Integer> trotti : db.getTrottinettesDispo()){
-                list.add(new Trottinette(trotti.get("TID"),0,0,0,0,0,trotti.get("POSITIONX"),trotti.get("POSITIONY")));
+                list.add(new Trottinette(trotti.get("TID"),"0","0",0,0,"libre",trotti.get("POSITIONX"),trotti.get("POSITIONY")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

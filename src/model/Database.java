@@ -126,7 +126,7 @@ public class Database {
         java.sql.Timestamp sqlDate = new Timestamp(date.getTime());
         PreparedStatement statement = conn.prepareStatement("INSERT INTO " +
                 "TROTTINETTE(TID, DATESERVICE, MODELE, PLAINTE, BATTERIE" +
-                ", POSITIONX, POSITIONY, STATE)values(?,?,?,?,?,?,?,?)");
+                ", POSITIONX, POSITIONY, ETAT)values(?,?,?,?,?,?,?,?)");
         statement.setInt(1, Integer.parseInt(hmap.get("numero")));
         statement.setTimestamp(2, sqlDate);
         statement.setString(3, hmap.get(" modele"));
@@ -139,12 +139,37 @@ public class Database {
         statement.close();
     }
 
+    public Trottinette getTrottinette(int tID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement(
+                "SELECT * FROM TROTTINETTE WHERE TROTTINETTE.TID = ?");
+        statement.setInt(1, tID);
+        ResultSet res = statement.executeQuery();
+        res.next();
+
+        return new Trottinette(tID,
+                String.valueOf(res.getTimestamp("DATESERVICE")),
+                res.getString("MODELE"),
+                res.getInt("PLAINTE"),
+                res.getInt("BATTERIE"),
+                res.getString("ETAT"),
+                res.getInt("POSITIONX"),
+                res.getInt("POSITIONY"));
+    }
+
     public ArrayList<Trottinette> getTrottinettes() throws SQLException {
         ArrayList<Trottinette> trotis = new ArrayList<Trottinette>();
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM TROTTINETTE");
         ResultSet res = statement.executeQuery();
         while(res.next()) {
-            trotis.add(new Trottinette(res.getInt("TID"), res.getInt("DATESERVICE"), res.getInt("MODELE"), res.getInt("PLAINTE"), res.getInt("BATTERIE"), res.getInt("DISPONIBLE"), res.getInt("POSITIONX"), res.getInt("POSITIONY")));
+            trotis.add(new Trottinette(
+                    res.getInt("TID"),
+                    String.valueOf(res.getInt("DATESERVICE")),
+                    res.getString("MODELE"),
+                    res.getInt("PLAINTE"),
+                    res.getInt("BATTERIE"),
+                    res.getString("ETAT"),
+                    res.getInt("POSITIONX"),
+                    res.getInt("POSITIONY")));
         }
         return trotis;
     }
@@ -158,7 +183,7 @@ public class Database {
     public ArrayList<HashMap<String, Integer>> getTrottinettesDispo() throws SQLException {
         ArrayList<HashMap<String, Integer>> trottinettes = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement("SELECT TID, POSITIONX" +
-                ", POSITIONY FROM TROTTINETTE WHERE STATE = 'libre'");
+                ", POSITIONY FROM TROTTINETTE WHERE ETAT = 'libre'");
         ResultSet res = statement.executeQuery();
         while(res.next()) {
             HashMap<String, Integer> hmap = new HashMap<>();

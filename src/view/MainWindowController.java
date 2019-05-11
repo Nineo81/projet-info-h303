@@ -44,7 +44,7 @@ public class MainWindowController {
             @Override
             public void handle(MouseEvent event) {
                 if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-                    clickTrotti(trottinetteTable.getSelectionModel().getSelectedItem());
+                    clickTrotti(trottinetteTable.getSelectionModel().getSelectedItem().getTID());
                 }
             }
         });
@@ -59,8 +59,8 @@ public class MainWindowController {
      * Handle click on a specified row of the table
      */
 
-    private void clickTrotti(Trottinette trotti){
-        mainWindowPage.trottiAccess(trotti);
+    private void clickTrotti(int tID){
+        mainWindowPage.trottiAccess(tID);
     }
 
     public void setUsername(String username){

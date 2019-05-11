@@ -18,6 +18,7 @@ public class Main extends Application {
     private LoginPage loginPage;
     private MainWindowPage mainWindowPage;
     private RegisterPage registerPage;
+    private InfoTrottiPage infoTrottiPage;
     private Stage window;
     private Stage subWindow;
     private String username;
@@ -137,12 +138,17 @@ public class Main extends Application {
         window.setScene(createMainWindowScene(trottinettes));
     }
 
-    public void openInfoTrotti(String number, int battery, int complaint){
+    public void openInfoTrotti(String number, int battery, int complaint, String state){
+        infoTrottiPage = new InfoTrottiPage();
+        infoTrottiPage.setMain(this);
+
         InfoTrottiController controller = infoTrottiLoader.getController();
         controller.setBattery(battery);
         controller.setComplaint(complaint);
         controller.setNumber(number);
         controller.setUserType(userType);
+        controller.setPos(state);
+        controller.setInfoTrottiPage(infoTrottiPage);
 
         subWindow.setScene(infoTrottiScene);
         subWindow.show();

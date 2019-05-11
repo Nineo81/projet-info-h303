@@ -7,7 +7,6 @@ import model.Trottinette;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 public class LoginPage {
 
@@ -26,10 +25,10 @@ public class LoginPage {
                 main.setUserType("user");
                 main.setUsername(result[0]);
                 main.openMainWindow(trottiList(db));
-            } else if(result.equals("rechargeur")){
+            } else if(result[1].equals("rechargeur")){
                 main.setUserType("rechargeur");
                 main.setUsername(result[0]);
-                main.openMainWindow(FXCollections.observableArrayList());
+                main.openMainWindow(trottiListRechargeur(db));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -40,9 +39,18 @@ public class LoginPage {
         ObservableList<Trottinette> list = FXCollections.observableArrayList();
 
         try {
-            for(HashMap<String, Integer> trotti : db.getTrottinettesDispo()){
-                list.add(new Trottinette(trotti.get("TID"),"0","0",0,0,"libre",trotti.get("POSITIONX"),trotti.get("POSITIONY")));
-            }
+            list.addAll(db.getTrottinettesDispo());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    private ObservableList<Trottinette> trottiListRechargeur(Database db){
+        ObservableList<Trottinette> list = FXCollections.observableArrayList();
+
+        try {
+            list.addAll(db.getTrottinettesRechargeur(Integer.parseInt(main.getUsername())));
         } catch (SQLException e) {
             e.printStackTrace();
         }

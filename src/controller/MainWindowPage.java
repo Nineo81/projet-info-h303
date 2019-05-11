@@ -46,7 +46,7 @@ public class MainWindowPage {
             e.printStackTrace();
         }
 
-        main.openInfoTrotti(Integer.toString(trottinette.getTID()),trottinette.getBattery(),trottinette.getPlaint());
+        main.openInfoTrotti(Integer.toString(trottinette.getTID()),trottinette.getBattery(),trottinette.getPlaint(), trottinette.getState());
     }
 
     public void setMain(Main main){

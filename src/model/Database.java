@@ -139,14 +139,14 @@ public class Database {
         statement.close();
     }
 
-    public Trottinette getTrottinette(int tID) throws SQLException {
+    public Trottinette getTrottinette(int TID) throws SQLException {
         PreparedStatement statement = conn.prepareStatement(
                 "SELECT * FROM TROTTINETTE WHERE TROTTINETTE.TID = ?");
-        statement.setInt(1, tID);
+        statement.setInt(1, TID);
         ResultSet res = statement.executeQuery();
         res.next();
 
-        return new Trottinette(tID,
+        return new Trottinette(TID,
                 String.valueOf(res.getTimestamp("DATESERVICE")),
                 res.getString("MODELE"),
                 res.getInt("PLAINTE"),
@@ -180,17 +180,49 @@ public class Database {
         statement.close();
     }
 
-    public ArrayList<HashMap<String, Integer>> getTrottinettesDispo() throws SQLException {
-        ArrayList<HashMap<String, Integer>> trottinettes = new ArrayList<>();
+    public ArrayList<Trottinette> getTrottinettesDispo() throws SQLException {
+        ArrayList<Trottinette> trottinettes = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement("SELECT TID, POSITIONX" +
                 ", POSITIONY FROM TROTTINETTE WHERE ETAT = 'libre'");
         ResultSet res = statement.executeQuery();
         while(res.next()) {
-            HashMap<String, Integer> hmap = new HashMap<>();
-            hmap.put("TID", res.getInt("TID"));
-            hmap.put("POSITIONX", res.getInt("POSITIONX"));
-            hmap.put("POSITIONY", res.getInt("POSITIONY"));
-            trottinettes.add(hmap);
+            trottinettes.add(new Trottinette(
+                    res.getInt("TID"),
+                    "0",
+                    "0",
+                    0,
+                    0,
+                    "libre",
+                    res.getInt("POSITIONX"),
+                    res.getInt("POSITIONY")));
+        }
+        res.close();
+        return trottinettes;
+    }
+
+    public ArrayList<Trottinette> getTrottinettesRechargeur(int UID) throws SQLException {
+        ArrayList<Trottinette> trottinettes = new ArrayList<>();
+        PreparedStatement statement = conn.prepareStatement(
+                "SELECT TID, POSITIONX, POSITIONY, ETAT " +
+                "FROM TROTTINETTE " +
+                "WHERE ETAT = 'libre' " +
+                "UNION " +
+                "SELECT TID, POSITIONX,POSITIONY, ETAT " +
+                "FROM TROTTINETTE " +
+                "WHERE ETAT = 'en charge' AND " +
+                        "EXISTS(SELECT * FROM RECHARGE WHERE RECHARGE.UID = ?)");
+        statement.setInt(1, UID);
+        ResultSet res = statement.executeQuery();
+        while(res.next()) {
+            trottinettes.add(new Trottinette(
+                    res.getInt("TID"),
+                    "0",
+                    "0",
+                    0,
+                    0,
+                    res.getString("ETAT"),
+                    res.getInt("POSITIONX"),
+                    res.getInt("POSITIONY")));
         }
         res.close();
         return trottinettes;
@@ -206,7 +238,7 @@ public class Database {
     }
 
     public void introduceComplain(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1 WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1, ETAT = 'défecteuse' WHERE TID = " + TID);
         statement.execute();
         statement.close();
     }
@@ -218,7 +250,7 @@ public class Database {
     }
 
     public void stateUpdate(String newState, int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET STATE = " + newState + " WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET ETAT = " + newState + " WHERE TID = " + TID);
         statement.execute();
         statement.close();
     }
@@ -305,6 +337,26 @@ public class Database {
         statement.setTimestamp(10, end);
         statement.execute();
 
+    }
+
+    public void endCharge(int TID, int UID, String endTime, Double destX, Double destY) throws SQLException, ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = formatter.parse(endTime);
+        Timestamp end = new Timestamp(date.getTime());
+
+        PreparedStatement statement = this.conn.prepareStatement(
+                "UPDATE RECHARGE " +
+                        "SET DATEFIN = ?, " +
+                        "CHARGEF = 4, " +
+                        "DESTX = ?, " +
+                        "DESTY = ? " +
+                        "WHERE UID = ? AND TID = ?");
+        statement.setTimestamp(1,end);
+        statement.setDouble(2,destX);
+        statement.setDouble(3,destY);
+        statement.setInt(4,UID);
+        statement.setInt(5,TID);
+        statement.execute();
     }
 
     public void insertIntervention(HashMap<String, String> Intervention) throws SQLException, ParseException {

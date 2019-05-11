@@ -7,11 +7,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import model.Database;
 import model.Path;
 import model.Trottinette;
 import view.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class Main extends Application {
 
@@ -56,7 +58,6 @@ public class Main extends Application {
 
         window.setScene(loginScene);
         window.show();
-
     }
 
     private Scene createLoginScene() {

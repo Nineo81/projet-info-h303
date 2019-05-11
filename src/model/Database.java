@@ -57,12 +57,12 @@ public class Database {
 
     public void insertUtilisateur(HashMap<String,String> Utilisateur) throws SQLException {
         String query = "INSERT INTO UTILISATEUR (" +
-                       "UID, MOTDEPASSE, NUMCARTE)" +
+                       "UID, MOTDEPASSE, COMPTE)" +
                        "values(?,?,?)";
         PreparedStatement statement = this.conn.prepareStatement(query);
         statement.setInt(1,Integer.parseInt(Utilisateur.get("ID")));
         statement.setInt(2,Integer.parseInt(Utilisateur.get("password")));
-        statement.setString(3,Utilisateur.get("bankaccount"));
+        statement.setLong(3,Long.parseLong(Utilisateur.get("bankaccount")));
         statement.execute();
         statement.close();
     }
@@ -70,7 +70,7 @@ public class Database {
     public void insertRechargeur(HashMap<String,String> rechargeur) throws SQLException {
         //Adding Rechargeur id, password and bankaccount to UTILISATEUR
         String userQuery = "INSERT INTO UTILISATEUR (" +
-                "UID, MOTDEPASSE, NUMCARTE)" +
+                "UID, MOTDEPASSE, COMPTE)" +
                 "values(?,?,?)";
         //Adding Rechargeur other info to RECHARGEUR
         String regiQuery = "INSERT INTO RECHARGEUR (" +
@@ -80,7 +80,7 @@ public class Database {
         PreparedStatement userStatement = this.conn.prepareStatement(userQuery);
         userStatement.setInt(1, Integer.parseInt(rechargeur.get("ID")));
         userStatement.setInt(2, Integer.parseInt(rechargeur.get("password")));
-        userStatement.setString(3, rechargeur.get("bankaccount"));
+        userStatement.setLong(3, Long.parseLong(rechargeur.get("bankaccount")));
 
         PreparedStatement regiStatement = this.conn.prepareStatement(regiQuery);
         regiStatement.setInt(1, Integer.parseInt(rechargeur.get("ID")));

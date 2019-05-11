@@ -59,12 +59,12 @@ public class Database {
 
     public void insertUtilisateur(HashMap<String,String> Utilisateur) throws SQLException {
         String query = "INSERT INTO UTILISATEUR (" +
-                       "UID, MOTDEPASSE, NUMCARTE)" +
+                       "UID, MOTDEPASSE, COMPTE)" +
                        "values(?,?,?)";
         PreparedStatement statement = this.conn.prepareStatement(query);
         statement.setInt(1,Integer.parseInt(Utilisateur.get("ID")));
         statement.setInt(2,Integer.parseInt(Utilisateur.get("password")));
-        statement.setString(3,Utilisateur.get("bankaccount"));
+        statement.setLong(3,Long.parseLong(Utilisateur.get("bankaccount")));
         statement.execute();
         statement.close();
     }
@@ -72,7 +72,7 @@ public class Database {
     public void insertRechargeur(HashMap<String,String> rechargeur) throws SQLException {
         //Adding Rechargeur id, password and bankaccount to UTILISATEUR
         String userQuery = "INSERT INTO UTILISATEUR (" +
-                "UID, MOTDEPASSE, NUMCARTE)" +
+                "UID, MOTDEPASSE, COMPTE)" +
                 "values(?,?,?)";
         //Adding Rechargeur other info to RECHARGEUR
         String regiQuery = "INSERT INTO RECHARGEUR (" +
@@ -82,7 +82,7 @@ public class Database {
         PreparedStatement userStatement = this.conn.prepareStatement(userQuery);
         userStatement.setInt(1, Integer.parseInt(rechargeur.get("ID")));
         userStatement.setInt(2, Integer.parseInt(rechargeur.get("password")));
-        userStatement.setString(3, rechargeur.get("bankaccount"));
+        userStatement.setLong(3, Long.parseLong(rechargeur.get("bankaccount")));
 
         PreparedStatement regiStatement = this.conn.prepareStatement(regiQuery);
         regiStatement.setInt(1, Integer.parseInt(rechargeur.get("ID")));
@@ -202,7 +202,6 @@ public class Database {
                     res.getDouble("POSITIONY")));
         }
         res.close();
-        statement.close();
         return trottinettes;
     }
 
@@ -231,17 +230,16 @@ public class Database {
                     res.getDouble("POSITIONY")));
         }
         res.close();
-        statement.close();
         return trottinettes;
     }
 
     public int getBattery(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("SELECT BATTERIE FROM TROTTINETTE WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("SELECT BATTERIE FROM TROTTINETTE WHERE TID = ?");
+        statement.setInt(1, TID);
         ResultSet res = statement.executeQuery();
         res.next();
         int charge = res.getInt("BATTERIE");
         res.close();
-        statement.close();
         return charge;
     }
 
@@ -253,7 +251,8 @@ public class Database {
     }
 
     public void clearComplain(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = 0 WHERE TID = " + TID);
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = 0 WHERE TID = ?");
+        statement.setInt(1, TID);
         statement.execute();
         statement.close();
     }
@@ -559,5 +558,23 @@ public class Database {
         if(this.conn != null && !this.conn.isClosed()){
             this.conn.close();
         }
+    }
+
+    public void updatePosition(int TID) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE" +
+                " SET POSITIONX = (SELECT DESTX" +
+                "                 FROM TRAJET" +
+                "                 WHERE TID = ? AND DATEFIN = (SELECT MAX(DATEFIN)" +
+                "                                              FROM TRAJET" +
+                "                                              WHERE TID = ?))," +
+                "    POSITIONY = (SELECT DESTY" +
+                "                 FROM TRAJET" +
+                "                 WHERE TID = ? AND DATEFIN = (SELECT MAX(DATEFIN)" +
+                "                                              FROM TRAJET" +
+                "                                              WHERE TID = ?))" +
+                " WHERE TID = ?");
+        for(int i = 1; i<6 ; i++) statement.setInt(i, TID);
+        statement.execute();
+        statement.close();
     }
 }

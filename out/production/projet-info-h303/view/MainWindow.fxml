@@ -34,7 +34,7 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <Button layoutX="470.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleHistoryAction" prefHeight="50.0" prefWidth="116.0" text="Historique">
+      <Button fx:id="button" layoutX="470.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="116.0" text="Historique">
          <font>
             <Font size="18.0" />
          </font>

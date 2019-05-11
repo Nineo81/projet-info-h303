@@ -36,7 +36,7 @@ public class MainWindowPage {
     }
 
     public void userAccess(){
-
+        Database db = Database.getInstance();
     }
 
     public void trottiAccess(int tID){

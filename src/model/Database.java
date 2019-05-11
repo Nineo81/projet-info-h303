@@ -119,7 +119,7 @@ public class Database {
         statement.setTimestamp(10, dateSQL);
         statement.setLong(11, Long.parseLong(Technicien.get("bankaccount")));
         statement.execute();
-
+        statement.close();
     }
 
     public void injectTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
@@ -173,6 +173,8 @@ public class Database {
                     res.getDouble("POSITIONX"),
                     res.getDouble("POSITIONY")));
         }
+        res.close();
+        statement.close();
         return trotis;
     }
 
@@ -200,6 +202,7 @@ public class Database {
                     res.getDouble("POSITIONY")));
         }
         res.close();
+        statement.close();
         return trottinettes;
     }
 
@@ -228,6 +231,7 @@ public class Database {
                     res.getDouble("POSITIONY")));
         }
         res.close();
+        statement.close();
         return trottinettes;
     }
 
@@ -237,6 +241,7 @@ public class Database {
         res.next();
         int charge = res.getInt("BATTERIE");
         res.close();
+        statement.close();
         return charge;
     }
 
@@ -269,6 +274,7 @@ public class Database {
             list.add(res.getInt("TID"));
         }
         res.close();
+        statement.close();
         return list;
     }
 
@@ -286,13 +292,16 @@ public class Database {
         res.next();
         if (res.getString("ISARECHARGEUR") == "no" && res.getInt("MOTDEPASSE") == password) {
             res.close();
+            statement.close();
             return new String[]{String.valueOf(UID),"user"};
         }
         else if(res.getString("ISARECHARGEUR") == "yes" && res.getInt("MOTDEPASSE") == password){
             res.close();
+            statement.close();
             return new String[]{Integer.toString(UID),"rechargeur"};
         }else {
             res.close();
+            statement.close();
             return new String[]{Integer.toString(UID),"none"};
         }
     }
@@ -308,9 +317,13 @@ public class Database {
         res.next();
 
         if(res.getInt("MOTDEPASSE") == password){
+            res.close();
+            statement.close();
             return TID;
         }
         else{
+            res.close();
+            statement.close();
             return "none";
         }
     }
@@ -335,7 +348,7 @@ public class Database {
         statement.setTimestamp(7, start);
         statement.setTimestamp(8, end);
         statement.execute();
-
+        statement.close();
     }
 
     public void insertRecharge(HashMap<String, String> Recharge) throws SQLException, ParseException {
@@ -360,7 +373,7 @@ public class Database {
         statement.setTimestamp(9, start);
         statement.setTimestamp(10, end);
         statement.execute();
-
+        statement.close();
     }
 
     public void endCharge(int TID, int UID, String endTime, Double destX, Double destY) throws SQLException, ParseException {
@@ -381,6 +394,7 @@ public class Database {
         statement.setInt(4,UID);
         statement.setInt(5,TID);
         statement.execute();
+        statement.close();
     }
 
     public void insertIntervention(HashMap<String, String> Intervention) throws SQLException, ParseException {
@@ -405,7 +419,7 @@ public class Database {
         statement.setTimestamp(4, complain);
         statement.setTimestamp(5, repaire);
         statement.execute();
-
+        statement.close();
     }
 
     public int getTravolder() throws SQLException {
@@ -419,6 +433,7 @@ public class Database {
         res.next();
         output = res.getInt("TID");
         res.close();
+        statement.close();
         return output;
     }
 
@@ -466,6 +481,8 @@ public class Database {
                     res.getInt("MOTDEPASSE"),
                     res.getLong("COMPTE")));
         }
+        res.close();
+        statement.close();
         return userList;
     }
 

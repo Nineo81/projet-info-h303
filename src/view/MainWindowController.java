@@ -15,8 +15,6 @@ import model.Trottinette;
 
 public class MainWindowController {
 
-    private ObservableList<Trottinette> trottinettes;
-
     private MainWindowPage mainWindowPage;
 
     private String userType;
@@ -120,9 +118,9 @@ public class MainWindowController {
     }
 
     public void setTrottinettes(ObservableList<Trottinette> trottinettes){
-        this.trottinettes = trottinettes;
+        ObservableList<Trottinette> trottinettes1 = trottinettes;
         //Specify table object
-        trottinetteTable.setItems(this.trottinettes);
+        trottinetteTable.setItems(trottinettes1);
         this.trottinetteTable.refresh();
     }
 

@@ -160,9 +160,13 @@ public class Database {
                 res.getDouble("POSITIONY"));
     }
 
-    public ArrayList<Trottinette> getTrottinettes() throws SQLException {
+    public ArrayList<Trottinette> getTrottinettes(String techID) throws SQLException {
         ArrayList<Trottinette> trotis = new ArrayList<Trottinette>();
-        PreparedStatement statement = conn.prepareStatement("SELECT * FROM TROTTINETTE");
+        PreparedStatement statement = conn.prepareStatement(
+                "SELECT * FROM TROTTINETTE WHERE ETAT = 'libre' " +
+                        "UNION SELECT * FROM TROTTINETTE WHERE TID = (" +
+                        "SELECT TID FROM INTERVENTION WHERE ENSERVICE = 0 AND TECHID = ?)");
+        statement.setString(1,techID);
         ResultSet res = statement.executeQuery();
         while(res.next()) {
             trotis.add(new Trottinette(

@@ -12,8 +12,6 @@ import javafx.scene.input.MouseEvent;
 
 public class UserListController {
 
-    private ObservableList<User> users;
-
     private UserPage userPage;
 
     @FXML
@@ -39,9 +37,9 @@ public class UserListController {
     }
 
     public void setUserList(ObservableList<User> userList) {
-        this.users = userList;
+        ObservableList<User> users = userList;
         //specify tableobject
-        this.userTable.setItems(this.users);
+        this.userTable.setItems(users);
         this.userTable.refresh();
     }
 

@@ -10,8 +10,6 @@ import java.util.HashMap;
 
 public class NewTrottiPage {
 
-    private Main main;
-
     public void addTrotti(int TID, String model, Double posX, Double posY){
         HashMap<String, String> hmap = new HashMap<>();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -39,6 +37,6 @@ public class NewTrottiPage {
     }
 
     public void setMain(Main main) {
-        this.main = main;
+        Main main1 = main;
     }
 }

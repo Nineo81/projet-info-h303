@@ -6,8 +6,6 @@ import java.sql.SQLException;
 
 public class ComplaintPage {
 
-    private Main main;
-
     public void resolveComplaint(int TID, String note){
         Database db = Database.getInstance();
         db.open();
@@ -23,6 +21,6 @@ public class ComplaintPage {
     }
 
     public void setMain(Main main) {
-        this.main = main;
+        Main main1 = main;
     }
 }

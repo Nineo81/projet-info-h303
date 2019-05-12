@@ -41,7 +41,7 @@ public class LoginPage {
                 } else {
                     main.setUserType("technicien");
                     main.setUsername(res);
-                    main.openMainWindow(trottiListTechnicien(db));
+                    main.openMainWindow(trottiListTechnicien(db,username));
                 }
                 db.close();
             } catch (SQLException e1) {
@@ -61,11 +61,11 @@ public class LoginPage {
         return list;
     }
 
-    private ObservableList<Trottinette> trottiListTechnicien(Database db){
+    private ObservableList<Trottinette> trottiListTechnicien(Database db,String username){
         ObservableList<Trottinette> list = FXCollections.observableArrayList();
 
         try {
-            list.addAll(db.getTrottinettes());
+            list.addAll(db.getTrottinettes(username));
         } catch (SQLException e) {
             e.printStackTrace();
         }

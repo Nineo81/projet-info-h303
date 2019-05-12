@@ -14,16 +14,6 @@ import java.io.IOException;
 
 public class Main extends Application {
 
-    private LoginPage loginPage;
-    private MainWindowPage mainWindowPage;
-    private RegisterPage registerPage;
-    private InfoTrottiPage infoTrottiPage;
-    private UserPage userPage;
-    private ManageTrottiPage manageTrottiPage;
-    private NewTrottiPage newTrottiPage;
-    private QueriesPage queriesPage;
-    private ComplaintPage complaintPage;
-
     private Stage window;
     private Stage subWindow;
 
@@ -41,24 +31,34 @@ public class Main extends Application {
     private Scene complaintScene;
 
     @FXML
+    private
     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("../view/Connection.fxml"));
     @FXML
+    private
     FXMLLoader mainWindowLoader = new FXMLLoader(getClass().getResource("../view/MainWindow.fxml"));
     @FXML
+    private
     FXMLLoader infoTrottiLoader = new FXMLLoader(getClass().getResource("../view/InfoTrotti.fxml"));
     @FXML
+    private
     FXMLLoader registerLoader = new FXMLLoader(getClass().getResource("../view/Register.fxml"));
     @FXML
+    private
     FXMLLoader historyLoader = new FXMLLoader(getClass().getResource("../view/History.fxml"));
     @FXML
+    private
     FXMLLoader userListLoader = new FXMLLoader(getClass().getResource("../view/UserList.fxml"));
     @FXML
+    private
     FXMLLoader manageTrottiLoader = new FXMLLoader(getClass().getResource("../view/ManageTrotti.fxml"));
     @FXML
+    private
     FXMLLoader newTrottiLoader = new FXMLLoader(getClass().getResource("../view/NewTrotti.fxml"));
     @FXML
+    private
     FXMLLoader queriesLoader = new FXMLLoader(getClass().getResource("../view/Queries.fxml"));
     @FXML
+    private
     FXMLLoader complaintLoader = new FXMLLoader(getClass().getResource("../view/Complaint.fxml"));
 
     public static void main(String[] args){
@@ -85,7 +85,7 @@ public class Main extends Application {
     }
 
     private Scene createLoginScene() {
-        loginPage = new LoginPage();
+        LoginPage loginPage = new LoginPage();
         loginPage.setMain(this);
 
         AnchorPane content = null;
@@ -101,7 +101,7 @@ public class Main extends Application {
     }
 
     private Scene createRegisterScene(){
-        registerPage = new RegisterPage();
+        RegisterPage registerPage = new RegisterPage();
         registerPage.setMain(this);
 
         AnchorPane content = null;
@@ -141,7 +141,7 @@ public class Main extends Application {
     }
 
     private Scene createUserScene(){
-        userPage = new UserPage();
+        UserPage userPage = new UserPage();
         userPage.setMain(this);
 
         AnchorPane content = null;
@@ -157,7 +157,7 @@ public class Main extends Application {
     }
 
     private Scene createNewTrottiScene(){
-        newTrottiPage = new NewTrottiPage();
+        NewTrottiPage newTrottiPage = new NewTrottiPage();
         newTrottiPage.setMain(this);
 
         AnchorPane content = null;
@@ -174,7 +174,7 @@ public class Main extends Application {
     }
 
     private Scene createComplaintScene(){
-        complaintPage = new ComplaintPage();
+        ComplaintPage complaintPage = new ComplaintPage();
         complaintPage.setMain(this);
 
         AnchorPane content = null;
@@ -191,7 +191,7 @@ public class Main extends Application {
     }
 
     private Scene createQueriesScene(){
-        queriesPage = new QueriesPage();
+        QueriesPage queriesPage = new QueriesPage();
         queriesPage.setMain(this);
 
         AnchorPane content = null;
@@ -208,7 +208,7 @@ public class Main extends Application {
     }
 
     private Scene createManageTrottiScene(){
-        manageTrottiPage = new ManageTrottiPage();
+        ManageTrottiPage manageTrottiPage = new ManageTrottiPage();
         manageTrottiPage.setMain(this);
 
         AnchorPane content = null;
@@ -225,7 +225,7 @@ public class Main extends Application {
     }
 
     private Scene createMainWindowScene(ObservableList<Trottinette> trottinettes) {
-        mainWindowPage = new MainWindowPage();
+        MainWindowPage mainWindowPage = new MainWindowPage();
         mainWindowPage.setMain(this);
 
         AnchorPane content = null;
@@ -274,7 +274,7 @@ public class Main extends Application {
     }
 
     public void openInfoTrotti(String number, int battery, int complaint, String state){
-        infoTrottiPage = new InfoTrottiPage();
+        InfoTrottiPage infoTrottiPage = new InfoTrottiPage();
         infoTrottiPage.setMain(this);
 
         InfoTrottiController controller = infoTrottiLoader.getController();

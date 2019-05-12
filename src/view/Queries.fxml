@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="254.0" prefWidth="496.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.QueriesController">
+<AnchorPane prefHeight="226.0" prefWidth="496.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.QueriesController">
    <children>
       <Text layoutX="190.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Requètes :">
          <font>
             <Font size="24.0" />
          </font>
       </Text>
-      <Button onAction="#handleR2Action" layoutX="51.0" layoutY="67.0" mnemonicParsing="false" text="R2">
+      <Button layoutX="130.0" layoutY="67.0" mnemonicParsing="false" onAction="#handleR2Action" text="R2">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button onAction="#handleR5Action" layoutX="375.0" layoutY="67.0" mnemonicParsing="false" text="R5">
+      <Button layoutX="385.0" layoutY="67.0" mnemonicParsing="false" onAction="#handleR5Action" text="R5">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button onAction="#handleR4Action" layoutX="270.0" layoutY="67.0" mnemonicParsing="false" text="R4">
+      <Button layoutX="300.0" layoutY="67.0" mnemonicParsing="false" onAction="#handleR4Action" text="R4">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button onAction="#handleR3Action" layoutX="160.0" layoutY="67.0" mnemonicParsing="false" text="R3">
+      <Button layoutX="215.0" layoutY="67.0" mnemonicParsing="false" onAction="#handleR3Action" text="R3">
          <font>
             <Font size="24.0" />
          </font>
@@ -38,10 +38,11 @@
             <Font size="24.0" />
          </font>
       </Text>
-      <Label fx:id="answer" layoutX="214.0" layoutY="186.0">
+      <Button layoutX="45.0" layoutY="67.0" mnemonicParsing="false" onAction="#handleR1Action" text="R1">
          <font>
             <Font size="24.0" />
          </font>
-      </Label>
+      </Button>
+      <TextArea fx:id="result" layoutX="12.0" layoutY="169.0" prefHeight="32.0" prefWidth="472.0" />
    </children>
 </AnchorPane>

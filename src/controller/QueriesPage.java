@@ -1,13 +1,28 @@
 package controller;
 
 import model.Database;
+import model.Trottinette;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class QueriesPage {
-    private Main main;
+
+    public ArrayList<Trottinette> R1(){
+        Database db = Database.getInstance();
+        ArrayList<Trottinette> res = null;
+        db.open();
+
+        try {
+            res = db.getTrottinettesDispo();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return res;
+    }
 
     public ArrayList<Integer> R2(){
         Database db = Database.getInstance();
@@ -70,6 +85,6 @@ public class QueriesPage {
     }
 
     public void setMain(Main main) {
-        this.main = main;
+        Main main1 = main;
     }
 }

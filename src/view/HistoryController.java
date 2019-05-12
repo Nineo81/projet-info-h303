@@ -9,8 +9,6 @@ import model.Path;
 
 public class HistoryController {
 
-    private ObservableList<Path> pathList;
-
     @FXML
     TableView historyTable;
 
@@ -44,9 +42,9 @@ public class HistoryController {
     }
 
     public void setPathList(ObservableList<Path> pathList){
-        this.pathList = pathList;
+        ObservableList<Path> pathList1 = pathList;
         //Specify table object
-        this.historyTable.setItems(this.pathList);
+        this.historyTable.setItems(pathList1);
         this.historyTable.refresh();
     }
 }

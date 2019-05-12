@@ -116,7 +116,7 @@ public class Database {
         statement.close();
     }
 
-    public void injectTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
+    public void insertTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = formatter.parse(hmap.get(" mise en service"));
         java.sql.Timestamp sqlDate = new Timestamp(date.getTime());
@@ -128,8 +128,16 @@ public class Database {
         statement.setString(3, hmap.get(" modele"));
         statement.setInt(4, Integer.parseInt(hmap.get(" plainte")));
         statement.setInt(5, Integer.parseInt(hmap.get(" charge")));
-        statement.setDouble(6, Double.parseDouble("0"));
-        statement.setDouble(7, Double.parseDouble("0"));
+        if(hmap.get("posX") == null){
+            statement.setDouble(6, Double.parseDouble("0"));
+        }else {
+            statement.setDouble(6, Double.parseDouble(hmap.get("posX")));
+        }
+        if(hmap.get("posY")==null){
+            statement.setDouble(7, Double.parseDouble("0"));
+        }else {
+            statement.setDouble(7, Double.parseDouble(hmap.get("posY")));
+        }
         statement.setString(8, "libre");
         statement.execute();
         statement.close();
@@ -182,7 +190,7 @@ public class Database {
     public ArrayList<Trottinette> getTrottinettesDispo() throws SQLException {
         ArrayList<Trottinette> trottinettes = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement("SELECT TID, POSITIONX" +
-                ", POSITIONY FROM TROTTINETTE WHERE ETAT = 'libre'");
+                ", POSITIONY FROM TROTTINETTE WHERE ETAT = 'libre' OR ETAT = 'defectueuse'");
         ResultSet res = statement.executeQuery();
         while(res.next()) {
             trottinettes.add(new Trottinette(
@@ -440,7 +448,7 @@ public class Database {
         ArrayList<HashMap<String,String>> registeredUsers = XmlParserRegistered.parse("Database_Data/registeredUsers.xml");
 
         for(HashMap<String, String> hmap : scooters){
-            injectTrottinette(hmap);
+            insertTrottinette(hmap);
         }
         for(HashMap<String, String> hmap : anonymous){
             insertUtilisateur(hmap);

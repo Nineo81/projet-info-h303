@@ -20,6 +20,8 @@ public class Main extends Application {
     private InfoTrottiPage infoTrottiPage;
     private UserPage userPage;
     private ManageTrottiPage manageTrottiPage;
+    private NewTrottiPage newTrottiPage;
+    private QueriesPage queriesPage;
 
     private Stage window;
     private Stage subWindow;
@@ -33,6 +35,8 @@ public class Main extends Application {
     private Scene historyScene;
     private Scene userListScene;
     private Scene manageTrottiScene;
+    private Scene newTrottiScene;
+    private Scene queriesScene;
 
     @FXML
     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("../view/Connection.fxml"));
@@ -48,6 +52,10 @@ public class Main extends Application {
     FXMLLoader userListLoader = new FXMLLoader(getClass().getResource("../view/UserList.fxml"));
     @FXML
     FXMLLoader manageTrottiLoader = new FXMLLoader(getClass().getResource("../view/ManageTrotti.fxml"));
+    @FXML
+    FXMLLoader newTrottiLoader = new FXMLLoader(getClass().getResource("../view/NewTrotti.fxml"));
+    @FXML
+    FXMLLoader queriesLoader = new FXMLLoader(getClass().getResource("../view/Queries.fxml"));
 
     public static void main(String[] args){
         launch(args);
@@ -64,6 +72,8 @@ public class Main extends Application {
         historyScene = createHIstory();
         userListScene = createUserScene();
         manageTrottiScene = createManageTrottiScene();
+        newTrottiScene = createNewTrottiScene();
+        queriesScene = createQueriesScene();
 
         window.setScene(loginScene);
         window.show();
@@ -137,6 +147,40 @@ public class Main extends Application {
         }
         UserListController controller = userListLoader.getController();
         controller.setUserPage(userPage);
+
+        return new Scene(content);
+    }
+
+    private Scene createNewTrottiScene(){
+        newTrottiPage = new NewTrottiPage();
+        newTrottiPage.setMain(this);
+
+        AnchorPane content = null;
+        try {
+            content = newTrottiLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        NewTrottiController controller = newTrottiLoader.getController();
+        controller.setNewTrottiPage(newTrottiPage);
+
+        return new Scene(content);
+    }
+
+    private Scene createQueriesScene(){
+        queriesPage = new QueriesPage();
+        queriesPage.setMain(this);
+
+        AnchorPane content = null;
+        try {
+            content = queriesLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        QueriesController controller = queriesLoader.getController();
+        controller.setQueriesPage(queriesPage);
 
         return new Scene(content);
     }
@@ -221,6 +265,16 @@ public class Main extends Application {
         controller.setPathList(pathList);
 
         subWindow.setScene(historyScene);
+        subWindow.show();
+    }
+
+    public void openNewTrotti(){
+        subWindow.setScene(newTrottiScene);
+        subWindow.show();
+    }
+
+    public void openQueries(){
+        subWindow.setScene(queriesScene);
         subWindow.show();
     }
 

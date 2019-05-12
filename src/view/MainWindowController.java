@@ -28,6 +28,12 @@ public class MainWindowController {
     private Button button;
 
     @FXML
+    private Button addTrotti;
+
+    @FXML
+    private Button requests;
+
+    @FXML
     private TableView<Trottinette> trottinetteTable;
 
     @FXML
@@ -75,6 +81,16 @@ public class MainWindowController {
         }
     }
 
+    @FXML
+    private void handleRequestAction(){
+        mainWindowPage.request();
+    }
+
+    @FXML
+    private void handleAddAction(){
+        mainWindowPage.addTrotti();
+    }
+
     /**
      * Handle click on a specified row of the table
      */
@@ -94,8 +110,12 @@ public class MainWindowController {
     public void showStateColumn(){
         if(userType.equals("technicien")){
             state.setVisible(true);
+            addTrotti.setVisible(true);
+            requests.setVisible(true);
         } else{
             state.setVisible(false);
+            addTrotti.setVisible(false);
+            requests.setVisible(false);
         }
     }
 

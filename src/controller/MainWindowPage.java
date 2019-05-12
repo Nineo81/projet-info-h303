@@ -36,6 +36,14 @@ public class MainWindowPage {
         main.openHistory(pathList);
     }
 
+    public void addTrotti(){
+        main.openNewTrotti();
+    }
+
+    public void request(){
+        main.openQueries();
+    }
+
     public void userAccess(){
         Database db = Database.getInstance();
         db.open();

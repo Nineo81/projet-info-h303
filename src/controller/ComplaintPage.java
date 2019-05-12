@@ -14,6 +14,8 @@ public class ComplaintPage {
 
         try {
             db.resolveIntervention(TID, note);
+            db.stateUpdate("libre", TID);
+            db.clearComplain(TID);
             db.close();
         } catch (SQLException e) {
             e.printStackTrace();

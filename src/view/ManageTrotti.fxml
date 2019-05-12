@@ -7,7 +7,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <AnchorPane prefHeight="159.0" prefWidth="403.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.ManageTrottiController">
    <children>
       <Text layoutX="14.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Trottinette : ">
@@ -15,7 +14,7 @@
             <Font size="24.0" />
          </font>
       </Text>
-      <Label fx:id="numberLabel" id="number" layoutX="144.0" layoutY="14.0">
+      <Label id="number" fx:id="numberLabel" layoutX="144.0" layoutY="14.0">
          <font>
             <Font size="24.0" />
          </font>
@@ -35,7 +34,12 @@
             <Font size="18.0" />
          </font>
       </CheckBox>
-      <Button onAction="#handleDeleteAction" layoutX="285.0" layoutY="110.0" mnemonicParsing="false" text="Supprimer">
+      <Button layoutX="285.0" layoutY="110.0" mnemonicParsing="false" onAction="#handleDeleteAction" text="Supprimer">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="complaint" onAction="#handleComplaintAction" layoutX="14.0" layoutY="110.0" mnemonicParsing="false" text="Plainte">
          <font>
             <Font size="18.0" />
          </font>

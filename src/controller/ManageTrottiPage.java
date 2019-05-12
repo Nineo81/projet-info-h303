@@ -21,6 +21,10 @@ public class ManageTrottiPage {
 
     }
 
+    public void openComplaint(int TID){
+        main.openComplaint(TID);
+    }
+
     public void deleteTrotti(int TID){
         Database db = Database.getInstance();
         db.open();

@@ -398,6 +398,50 @@ public class Database {
         statement.close();
     }
 
+    public void resolveIntervention(int TID, String note) throws SQLException {
+        Date date = new Date();
+        Timestamp repair = new Timestamp(date.getTime());
+        String query = "UPDATE INTERVENTION " +
+                "SET DATEINTERVENTION = ?, NOTE = ?, ENSERVICE = 1 " +
+                "WHERE TID = ? AND ENSERVICE = 0";
+
+        PreparedStatement statement = this.conn.prepareStatement(query);
+        statement.setTimestamp(1,repair);
+        statement.setString(2,note);
+        statement.setInt(3,TID);
+        statement.execute();
+        statement.close();
+    }
+
+    public void addingIntervention(int TID, String UID) throws SQLException, ParseException {
+        Date date = new Date();
+        Timestamp complainTime = new Timestamp(date.getTime());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        date = formatter.parse("0000-00-00 00:00:00");
+        Timestamp interventionTime = new Timestamp(date.getTime());
+
+        String query = "INSERT INTO " +
+                "INTERVENTION(TECHID, TID, UID, DATEPLAINTE, DATEINTERVENTION, ENSERVICE)"+
+                "VALUES(" +
+                "CASE " +
+                    "WHEN EXISTS(SELECT * FROM INTERVENTION WHERE ENSERVICE = 0 AND TID = ?) " +
+                        "THEN (SELECT TECHID FROM INTERVENTION WHERE ENSERVICE = 0 AND TID = ?) " +
+                "ELSE (SELECT TECHID FROM TECHNICIEN ORDER BY RANDOM() FETCH first 1 rows only) END," +
+                "?,?,?,?,?)";
+
+        PreparedStatement statement = this.conn.prepareStatement(query);
+        statement.setInt(1,TID);
+        statement.setInt(2,TID);
+        statement.setInt(3,TID);
+        statement.setInt(4,Integer.parseInt(UID));
+        statement.setTimestamp(5, complainTime);
+        statement.setTimestamp(6, interventionTime);
+        statement.setInt(7,0);
+        statement.execute();
+        statement.close();
+    }
+
     public void insertIntervention(HashMap<String, String> Intervention) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = formatter.parse(Intervention.get(" complainTime"));
@@ -412,13 +456,18 @@ public class Database {
         }
 
         PreparedStatement statement = this.conn.prepareStatement("INSERT INTO " +
-                "INTERVENTION(TID, UID, TECHID, DATEPLAINTE, DATEINTERVENTION)"+
-                "values(?,?,?,?,?)");
+                "INTERVENTION(TID, UID, TECHID, DATEPLAINTE, DATEINTERVENTION, ENSERVICE)"+
+                "values(?,?,?,?,?,?)");
         statement.setInt(1, Integer.parseInt(Intervention.get("scooter")));
         statement.setInt(2, Integer.parseInt(Intervention.get(" user")));
         statement.setString(3, TechID);
         statement.setTimestamp(4, complain);
         statement.setTimestamp(5, repaire);
+        if(Intervention.get("enService")==null){
+            statement.setInt(6, 1);
+        } else{
+            statement.setInt(6, Integer.parseInt(Intervention.get("enService")));
+        }
         statement.execute();
         statement.close();
     }

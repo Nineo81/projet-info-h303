@@ -22,6 +22,7 @@ public class Main extends Application {
     private ManageTrottiPage manageTrottiPage;
     private NewTrottiPage newTrottiPage;
     private QueriesPage queriesPage;
+    private ComplaintPage complaintPage;
 
     private Stage window;
     private Stage subWindow;
@@ -37,6 +38,7 @@ public class Main extends Application {
     private Scene manageTrottiScene;
     private Scene newTrottiScene;
     private Scene queriesScene;
+    private Scene complaintScene;
 
     @FXML
     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("../view/Connection.fxml"));
@@ -56,6 +58,8 @@ public class Main extends Application {
     FXMLLoader newTrottiLoader = new FXMLLoader(getClass().getResource("../view/NewTrotti.fxml"));
     @FXML
     FXMLLoader queriesLoader = new FXMLLoader(getClass().getResource("../view/Queries.fxml"));
+    @FXML
+    FXMLLoader complaintLoader = new FXMLLoader(getClass().getResource("../view/Complaint.fxml"));
 
     public static void main(String[] args){
         launch(args);
@@ -74,6 +78,7 @@ public class Main extends Application {
         manageTrottiScene = createManageTrottiScene();
         newTrottiScene = createNewTrottiScene();
         queriesScene = createQueriesScene();
+        complaintScene = createComplaintScene();
 
         window.setScene(loginScene);
         window.show();
@@ -168,6 +173,23 @@ public class Main extends Application {
         return new Scene(content);
     }
 
+    private Scene createComplaintScene(){
+        complaintPage = new ComplaintPage();
+        complaintPage.setMain(this);
+
+        AnchorPane content = null;
+        try {
+            content = complaintLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ComplaintController controller = complaintLoader.getController();
+        controller.setComplaintPage(complaintPage);
+
+        return new Scene(content);
+    }
+
     private Scene createQueriesScene(){
         queriesPage = new QueriesPage();
         queriesPage.setMain(this);
@@ -234,6 +256,13 @@ public class Main extends Application {
 
     public void openMainWindow(ObservableList<Trottinette> trottinettes) {
         window.setScene(createMainWindowScene(trottinettes));
+    }
+
+    public void openComplaint(int TID){
+        ComplaintController controller = complaintLoader.getController();
+        controller.setTID(TID);
+
+        subWindow.setScene(complaintScene);
     }
 
     public void openUserList(ObservableList<User> users){

@@ -28,6 +28,12 @@ public class MainWindowController {
     private Button button;
 
     @FXML
+    private Button addTrotti;
+
+    @FXML
+    private Button requests;
+
+    @FXML
     private TableView<Trottinette> trottinetteTable;
 
     @FXML
@@ -68,11 +74,21 @@ public class MainWindowController {
     private void handleButtonAction(){
         if(userType.equals("technicien")){
             button.setText("Utilisateur");
-
+            mainWindowPage.userAccess();
         } else {
             button.setText("Historique");
             mainWindowPage.historyAccess();
         }
+    }
+
+    @FXML
+    private void handleRequestAction(){
+        mainWindowPage.request();
+    }
+
+    @FXML
+    private void handleAddAction(){
+        mainWindowPage.addTrotti();
     }
 
     /**
@@ -80,7 +96,7 @@ public class MainWindowController {
      */
 
     private void clickTrotti(int tID){
-        mainWindowPage.trottiAccess(tID);
+        mainWindowPage.trottiAccess(tID, userType);
     }
 
     public void setUsername(String username){
@@ -94,8 +110,12 @@ public class MainWindowController {
     public void showStateColumn(){
         if(userType.equals("technicien")){
             state.setVisible(true);
+            addTrotti.setVisible(true);
+            requests.setVisible(true);
         } else{
             state.setVisible(false);
+            addTrotti.setVisible(false);
+            requests.setVisible(false);
         }
     }
 

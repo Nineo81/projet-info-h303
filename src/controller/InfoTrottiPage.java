@@ -14,14 +14,16 @@ public class InfoTrottiPage {
     private Main main;
 
     public void complaint(int TID){
-        System.out.println(TID);
         Database db = Database.getInstance();
         db.open();
 
         try {
             db.introduceComplain(TID);
+            db.addingIntervention(TID,main.getUsername());
             db.close();
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
     }

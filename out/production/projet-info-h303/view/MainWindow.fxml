@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainWindowController">
+<AnchorPane prefHeight="467.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainWindowController">
   <children>
     <TableView fx:id="trottinetteTable" layoutX="0.0" layoutY="60.0" prefHeight="340.0" prefWidth="600.0">
       <columns>
@@ -35,6 +35,16 @@
          </font>
       </Label>
       <Button fx:id="button" layoutX="470.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="116.0" text="Historique">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="addTrotti" onAction="#handleAddAction" layoutX="14.0" layoutY="413.0" mnemonicParsing="false" text="Ajouter une trottinette">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="requests" onAction="#handleRequestAction" layoutX="488.0" layoutY="413.0" mnemonicParsing="false" text="Requètes">
          <font>
             <Font size="18.0" />
          </font>

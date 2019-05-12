@@ -1,17 +1,11 @@
 package model;
 
-import controller.User;
-
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 public class Database {
     private String CONNECTION_URL = "jdbc:derby:" + "Database" + ";create=false";
@@ -122,7 +116,7 @@ public class Database {
         statement.close();
     }
 
-    public void injectTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
+    public void insertTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = formatter.parse(hmap.get(" mise en service"));
         java.sql.Timestamp sqlDate = new Timestamp(date.getTime());
@@ -134,8 +128,16 @@ public class Database {
         statement.setString(3, hmap.get(" modele"));
         statement.setInt(4, Integer.parseInt(hmap.get(" plainte")));
         statement.setInt(5, Integer.parseInt(hmap.get(" charge")));
-        statement.setDouble(6, Double.parseDouble("0"));
-        statement.setDouble(7, Double.parseDouble("0"));
+        if(hmap.get("posX") == null){
+            statement.setDouble(6, Double.parseDouble("0"));
+        }else {
+            statement.setDouble(6, Double.parseDouble(hmap.get("posX")));
+        }
+        if(hmap.get("posY")==null){
+            statement.setDouble(7, Double.parseDouble("0"));
+        }else {
+            statement.setDouble(7, Double.parseDouble(hmap.get("posY")));
+        }
         statement.setString(8, "libre");
         statement.execute();
         statement.close();
@@ -188,7 +190,7 @@ public class Database {
     public ArrayList<Trottinette> getTrottinettesDispo() throws SQLException {
         ArrayList<Trottinette> trottinettes = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement("SELECT TID, POSITIONX" +
-                ", POSITIONY FROM TROTTINETTE WHERE ETAT = 'libre'");
+                ", POSITIONY FROM TROTTINETTE WHERE ETAT = 'libre' OR ETAT = 'defectueuse'");
         ResultSet res = statement.executeQuery();
         while(res.next()) {
             trottinettes.add(new Trottinette(
@@ -396,6 +398,50 @@ public class Database {
         statement.close();
     }
 
+    public void resolveIntervention(int TID, String note) throws SQLException {
+        Date date = new Date();
+        Timestamp repair = new Timestamp(date.getTime());
+        String query = "UPDATE INTERVENTION " +
+                "SET DATEINTERVENTION = ?, NOTE = ?, ENSERVICE = 1 " +
+                "WHERE TID = ? AND ENSERVICE = 0";
+
+        PreparedStatement statement = this.conn.prepareStatement(query);
+        statement.setTimestamp(1,repair);
+        statement.setString(2,note);
+        statement.setInt(3,TID);
+        statement.execute();
+        statement.close();
+    }
+
+    public void addingIntervention(int TID, String UID) throws SQLException, ParseException {
+        Date date = new Date();
+        Timestamp complainTime = new Timestamp(date.getTime());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        date = formatter.parse("0000-00-00 00:00:00");
+        Timestamp interventionTime = new Timestamp(date.getTime());
+
+        String query = "INSERT INTO " +
+                "INTERVENTION(TECHID, TID, UID, DATEPLAINTE, DATEINTERVENTION, ENSERVICE)"+
+                "VALUES(" +
+                "CASE " +
+                    "WHEN EXISTS(SELECT * FROM INTERVENTION WHERE ENSERVICE = 0 AND TID = ?) " +
+                        "THEN (SELECT TECHID FROM INTERVENTION WHERE ENSERVICE = 0 AND TID = ?) " +
+                "ELSE (SELECT TECHID FROM TECHNICIEN ORDER BY RANDOM() FETCH first 1 rows only) END," +
+                "?,?,?,?,?)";
+
+        PreparedStatement statement = this.conn.prepareStatement(query);
+        statement.setInt(1,TID);
+        statement.setInt(2,TID);
+        statement.setInt(3,TID);
+        statement.setInt(4,Integer.parseInt(UID));
+        statement.setTimestamp(5, complainTime);
+        statement.setTimestamp(6, interventionTime);
+        statement.setInt(7,0);
+        statement.execute();
+        statement.close();
+    }
+
     public void insertIntervention(HashMap<String, String> Intervention) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = formatter.parse(Intervention.get(" complainTime"));
@@ -410,13 +456,18 @@ public class Database {
         }
 
         PreparedStatement statement = this.conn.prepareStatement("INSERT INTO " +
-                "INTERVENTION(TID, UID, TECHID, DATEPLAINTE, DATEINTERVENTION)"+
-                "values(?,?,?,?,?)");
+                "INTERVENTION(TID, UID, TECHID, DATEPLAINTE, DATEINTERVENTION, ENSERVICE)"+
+                "values(?,?,?,?,?,?)");
         statement.setInt(1, Integer.parseInt(Intervention.get("scooter")));
         statement.setInt(2, Integer.parseInt(Intervention.get(" user")));
         statement.setString(3, TechID);
         statement.setTimestamp(4, complain);
         statement.setTimestamp(5, repaire);
+        if(Intervention.get("enService")==null){
+            statement.setInt(6, 1);
+        } else{
+            statement.setInt(6, Integer.parseInt(Intervention.get("enService")));
+        }
         statement.execute();
         statement.close();
     }
@@ -446,7 +497,7 @@ public class Database {
         ArrayList<HashMap<String,String>> registeredUsers = XmlParserRegistered.parse("Database_Data/registeredUsers.xml");
 
         for(HashMap<String, String> hmap : scooters){
-            injectTrottinette(hmap);
+            insertTrottinette(hmap);
         }
         for(HashMap<String, String> hmap : anonymous){
             insertUtilisateur(hmap);
@@ -471,7 +522,7 @@ public class Database {
     public ArrayList<User> getUsers() throws SQLException {
         ArrayList<User> userList = new ArrayList<>();
         String query = "SELECT * FROM UTILISATEUR U " +
-                "LEFT OUTER JOIN RECHARGEUR R ON U.UID = R.UID";
+                "WHERE U.UID NOT IN (SELECT UID FROM RECHARGEUR)";
 
         PreparedStatement statement = this.conn.prepareStatement(query);
         ResultSet res = statement.executeQuery();

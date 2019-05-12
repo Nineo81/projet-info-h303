@@ -301,8 +301,8 @@ public class Main extends Application {
      */
     public void openManageTrotti(String state, int TID){
         ManageTrottiController controller = manageTrottiLoader.getController();
-        controller.setInitialCB(state);
         controller.setNumber(TID);
+        controller.setInitialCB(state);
 
         subWindow.setScene(manageTrottiScene);
         subWindow.show();

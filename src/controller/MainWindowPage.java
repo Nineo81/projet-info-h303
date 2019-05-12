@@ -6,16 +6,20 @@ import model.Database;
 import model.Path;
 import model.Trottinette;
 import model.User;
+import util.AlertMessage;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * MainWindowPage link buttons action from MainWindowController to database access and window access
+ */
 public class MainWindowPage {
 
     private Main main;
 
     /**
-     * Open a node showing history of user
+     * Open a subWindow showing history of user given by the database
      */
     public void historyAccess(){
         Database db = Database.getInstance();
@@ -27,7 +31,7 @@ public class MainWindowPage {
             list = db.getUserHistory(Integer.parseInt(main.getUsername()));
             db.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            AlertMessage.alert("Impossible d'accéder à l'historique !");
         }
 
         ObservableList<Path> pathList = FXCollections.observableArrayList();
@@ -36,14 +40,23 @@ public class MainWindowPage {
         main.openHistory(pathList);
     }
 
+    /**
+     * Open a subwindow showing addTrotti
+     */
     public void addTrotti(){
         main.openNewTrotti();
     }
 
+    /**
+     * Open a subwindow showing request
+     */
     public void request(){
         main.openQueries();
     }
 
+    /**
+     * Open a subWindow showing a list of user given by the database
+     */
     public void userAccess(){
         Database db = Database.getInstance();
         db.open();
@@ -52,7 +65,7 @@ public class MainWindowPage {
         try {
             userList = db.getUsers();
         } catch (SQLException e) {
-            e.printStackTrace();
+            AlertMessage.alert("Impossible d'accéder à la liste des utilisateurs !");
         }
 
         ObservableList<User> users = FXCollections.observableArrayList();
@@ -61,6 +74,12 @@ public class MainWindowPage {
         main.openUserList(users);
     }
 
+    /**
+     * Open a subwindow showing infoTrotti for user and reloader and manageTrotti for thecnicien,
+     * they each need a trottinette given by the database.
+     * @param tID ID of the trottinette
+     * @param userType Type of the user
+     */
     public void trottiAccess(int tID, String userType){
 
         Database db = Database.getInstance();
@@ -71,7 +90,7 @@ public class MainWindowPage {
             trottinette = db.getTrottinette(tID);
             db.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            AlertMessage.alert("Impossible d'accéder à la trottinette !");
         }
 
         if(userType.equals("technicien")){
@@ -81,6 +100,10 @@ public class MainWindowPage {
         }
     }
 
+    /**
+     *
+     * @param main Set the main to access info and window
+     */
     public void setMain(Main main){
         this.main = main;
     }

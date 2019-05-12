@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Parser of the registered file
+ */
 public class XmlParserRegistered{
     private static final String ID = "ID";
     private static final String LAST = "lastname";

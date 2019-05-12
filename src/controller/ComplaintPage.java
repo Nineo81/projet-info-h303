@@ -1,11 +1,20 @@
 package controller;
 
 import model.Database;
+import util.AlertMessage;
 
 import java.sql.SQLException;
 
+/**
+ * ComplaintPage link button action to database access
+ */
 public class ComplaintPage {
 
+    /**
+     * Access database to update status of INTERVENTION
+     * @param TID ID of the broken trottinette (int)
+     * @param note Note left by the technicien after fix (String)
+     */
     public void resolveComplaint(int TID, String note){
         Database db = Database.getInstance();
         db.open();
@@ -16,11 +25,7 @@ public class ComplaintPage {
             db.clearComplain(TID);
             db.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            AlertMessage.alert("Impossible de résoudre la plainte !");
         }
-    }
-
-    public void setMain(Main main) {
-        Main main1 = main;
     }
 }

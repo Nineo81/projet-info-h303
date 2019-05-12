@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Parser of the Mechanicien file
+ */
 public class XmlParserMech{
     private static final String ID = "mechanicID";
     private static final String LAST = "lastname";

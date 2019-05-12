@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Object used by javaFX to show in table
+ */
 public class Trottinette {
 
     private int TID;

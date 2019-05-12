@@ -4,18 +4,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Database;
 import model.Trottinette;
-
-import java.io.IOException;
+import util.AlertMessage;
 import java.sql.SQLException;
 
+/**
+ * LoginPage link buttons action from LoginController to database access
+ */
 public class LoginPage {
 
     private Main main;
 
     /**
-     * Handle the login action
+     * Login into the application, check with the database the existence and type of user trying to connect
+     * @param username ID of the user
+     * @param password Password of the user
      */
-    public void login(String username, String password) throws IOException {
+    public void login(String username, String password) {
         Database db = Database.getInstance();
         db.open();
 
@@ -32,12 +36,12 @@ public class LoginPage {
             }
             db.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            AlertMessage.alert("Mauvais mot de passe ou utilisateur !");
         } catch (NumberFormatException e){
             try {
                 String res = db.checkTech(username, Integer.parseInt(password));
                 if(res.equals("none")){
-                    //alert message
+                    AlertMessage.alert("Mauvais mot de passe ou utilisateur !");
                 } else {
                     main.setUserType("technicien");
                     main.setUsername(res);
@@ -45,11 +49,16 @@ public class LoginPage {
                 }
                 db.close();
             } catch (SQLException e1) {
-                e1.printStackTrace();
+                AlertMessage.alert("Mauvais mot de passe ou utilisateur !");
             }
         }
     }
 
+    /**
+     * Access database to get all trotinette free for the user
+     * @param db Database
+     * @return List of the trottinette
+     */
     private ObservableList<Trottinette> trottiList(Database db){
         ObservableList<Trottinette> list = FXCollections.observableArrayList();
 
@@ -61,6 +70,12 @@ public class LoginPage {
         return list;
     }
 
+    /**
+     * Access database to get all trotinette
+     * @param db Database
+     * @param username ID of the technicien
+     * @return List of the trottinette
+     */
     private ObservableList<Trottinette> trottiListTechnicien(Database db,String username){
         ObservableList<Trottinette> list = FXCollections.observableArrayList();
 
@@ -72,6 +87,11 @@ public class LoginPage {
         return list;
     }
 
+    /**
+     * Access database to get all trotinette free for the reloader
+     * @param db Database
+     * @return List of the trottinette
+     */
     private ObservableList<Trottinette> trottiListRechargeur(Database db){
         ObservableList<Trottinette> list = FXCollections.observableArrayList();
 
@@ -90,6 +110,10 @@ public class LoginPage {
         main.openRegister();
     }
 
+    /**
+     *
+     * @param main Set the main to access info and window
+     */
     public void setMain(Main main){
         this.main = main;
     }

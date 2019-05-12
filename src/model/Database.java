@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Date;
 
+/**
+ * Point of access to the database contain all sql query
+ */
 public class Database {
     private String CONNECTION_URL = "jdbc:derby:" + "Database" + ";create=false";
     private Connection conn = null;
@@ -50,7 +53,11 @@ public class Database {
         return instance;
     }
 
-
+    /**
+     * Add user to the database
+     * @param Utilisateur user info
+     * @throws SQLException if query fails
+     */
     public void insertUtilisateur(HashMap<String,String> Utilisateur) throws SQLException {
         String query = "INSERT INTO UTILISATEUR (" +
                        "UID, MOTDEPASSE, COMPTE)" +
@@ -63,6 +70,36 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Upgrade user to a reloader
+     * @param rechargeur reloader info
+     * @throws SQLException if query fails
+     */
+    public void upgradeUser(HashMap<String, String> rechargeur) throws SQLException {
+        String regiQuery = "INSERT INTO RECHARGEUR (" +
+                "UID, NOM, PRENOM, NUMTEL, " +
+                "COMMUNE, CODEPOSTAL, RUE, NUMERO)" +
+                "values(?,?,?,?,?,?,?,?)";
+
+        PreparedStatement regiStatement = this.conn.prepareStatement(regiQuery);
+        regiStatement.setInt(1, Integer.parseInt(rechargeur.get("ID")));
+        regiStatement.setString(2, rechargeur.get("lastname"));
+        regiStatement.setString(3, rechargeur.get("firstname"));
+        regiStatement.setInt(4, Integer.parseInt(rechargeur.get("phone")));
+        regiStatement.setString(5, rechargeur.get("city"));
+        regiStatement.setInt(6, Integer.parseInt(rechargeur.get("cp")));
+        regiStatement.setString(7, rechargeur.get("street"));
+        regiStatement.setInt(8, Integer.parseInt(rechargeur.get("number")));
+
+        regiStatement.execute();
+        regiStatement.close();
+    }
+
+    /**
+     * Add a reloader to the database
+     * @param rechargeur reloader info
+     * @throws SQLException if query fails
+     */
     public void insertRechargeur(HashMap<String,String> rechargeur) throws SQLException {
         //Adding Rechargeur id, password and bankaccount to UTILISATEUR
         String userQuery = "INSERT INTO UTILISATEUR (" +
@@ -90,8 +127,16 @@ public class Database {
 
         userStatement.execute();
         regiStatement.execute();
+        regiStatement.close();
+        userStatement.close();
     }
 
+    /**
+     * Add a technicien to the database
+     * @param Technicien technicien info
+     * @throws SQLException if query fails
+     * @throws ParseException if parsing of the date fails
+     */
     public void insertTechnicien(HashMap<String, String> Technicien) throws SQLException, ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -116,6 +161,12 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Add a trottinette to the database
+     * @param hmap trottinette info
+     * @throws SQLException if query fails
+     * @throws ParseException if formating of the date fails
+     */
     public void insertTrottinette(HashMap<String, String> hmap) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = formatter.parse(hmap.get(" mise en service"));
@@ -143,6 +194,12 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Get trottinette matching given ID
+     * @param TID ID of the trottinette
+     * @return Trottinette
+     * @throws SQLException if query fails
+     */
     public Trottinette getTrottinette(int TID) throws SQLException {
         PreparedStatement statement = conn.prepareStatement(
                 "SELECT * FROM TROTTINETTE WHERE TROTTINETTE.TID = ?");
@@ -160,10 +217,16 @@ public class Database {
                 res.getDouble("POSITIONY"));
     }
 
+    /**
+     * Get list of trottinette free or charging or in need of reparation
+     * @param techID ID of technicien
+     * @return list of trottinette
+     * @throws SQLException if query fails
+     */
     public ArrayList<Trottinette> getTrottinettes(String techID) throws SQLException {
         ArrayList<Trottinette> trotis = new ArrayList<Trottinette>();
         PreparedStatement statement = conn.prepareStatement(
-                "SELECT * FROM TROTTINETTE WHERE ETAT = 'libre' " +
+                "SELECT * FROM TROTTINETTE WHERE ETAT = 'libre' OR ETAT = 'en charge'" +
                         "UNION SELECT * FROM TROTTINETTE WHERE TID = (" +
                         "SELECT TID FROM INTERVENTION WHERE ENSERVICE = 0 AND TECHID = ?)");
         statement.setString(1,techID);
@@ -184,6 +247,11 @@ public class Database {
         return trotis;
     }
 
+    /**
+     * Delete a Trottinette from the database
+     * @param TID ID of the trottinette
+     * @throws SQLException if query fails
+     */
     public void deleteTrottinette(int TID) throws SQLException {
         PreparedStatement statement = conn.prepareStatement("DELETE FROM TROTTINETTE WHERE TID = ?");
         statement.setInt(1,TID);
@@ -191,6 +259,11 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Get a list of trottinette free for the user
+     * @return list of trottinette
+     * @throws SQLException if query fails
+     */
     public ArrayList<Trottinette> getTrottinettesDispo() throws SQLException {
         ArrayList<Trottinette> trottinettes = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement("SELECT TID, POSITIONX" +
@@ -211,6 +284,12 @@ public class Database {
         return trottinettes;
     }
 
+    /**
+     * Get a list of trottinette free for the relaoder
+     * @param UID ID of user
+     * @return list of trottinette
+     * @throws SQLException if query fails
+     */
     public ArrayList<Trottinette> getTrottinettesRechargeur(int UID) throws SQLException {
         ArrayList<Trottinette> trottinettes = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement(
@@ -239,16 +318,11 @@ public class Database {
         return trottinettes;
     }
 
-    public int getBattery(int TID) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("SELECT BATTERIE FROM TROTTINETTE WHERE TID = ?");
-        statement.setInt(1, TID);
-        ResultSet res = statement.executeQuery();
-        res.next();
-        int charge = res.getInt("BATTERIE");
-        res.close();
-        return charge;
-    }
-
+    /**
+     * Increment PLAINTE of given trottinette by one
+     * @param TID ID of trottinette
+     * @throws SQLException if query fails
+     */
     public void introduceComplain(int TID) throws SQLException {
         PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = PLAINTE + 1, ETAT = 'defecteuse' WHERE TID = ?");
         statement.setInt(1, TID);
@@ -256,6 +330,11 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Set back PLAINTE of a trottinette to zero
+     * @param TID ID of trottinette
+     * @throws SQLException if query fails
+     */
     public void clearComplain(int TID) throws SQLException {
         PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET PLAINTE = 0 WHERE TID = ?");
         statement.setInt(1, TID);
@@ -263,6 +342,12 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Update state of a given trottinette
+     * @param newState new state for the trottinette
+     * @param TID ID of the trottinette
+     * @throws SQLException if query fails
+     */
     public void stateUpdate(String newState, int TID) throws SQLException {
         PreparedStatement statement = conn.prepareStatement("UPDATE TROTTINETTE SET ETAT = ? WHERE TID = ?");
         statement.setString(1, newState);
@@ -271,6 +356,11 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Get a list of trottinette with more than ten PLAINTE
+     * @return list of trottinette
+     * @throws SQLException if query fails
+     */
     public ArrayList<Integer> tenComplaints() throws SQLException {
         ArrayList<Integer> list = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement("SELECT TID FROM INTERVENTION GROUP BY TID HAVING COUNT(TID)>9");
@@ -283,6 +373,13 @@ public class Database {
         return list;
     }
 
+    /**
+     * Check if user is part of the database
+     * @param UID ID of the user
+     * @param password password of the user
+     * @return ID of user and Type of user
+     * @throws SQLException if query fails
+     */
     public String[] checkUser(int UID, int password) throws SQLException {
         String query = "SELECT UID, MOTDEPASSE, " +
                        "CASE " +
@@ -311,6 +408,13 @@ public class Database {
         }
     }
 
+    /**
+     * Check if technicien is part of the database
+     * @param TID ID of technicien
+     * @param password password of the technicien
+     * @return ID of technicien
+     * @throws SQLException if query fails
+     */
     public String checkTech(String TID, int password) throws SQLException {
         String query = "SELECT TECHID, MOTDEPASSE " +
                        "FROM TECHNICIEN " +
@@ -333,6 +437,12 @@ public class Database {
         }
     }
 
+    /**
+     * Add a trajet to the database
+     * @param Trajet trajet info
+     * @throws SQLException if query fails
+     * @throws ParseException if parse of date fails
+     */
     public void insertTrajet(HashMap<String, String> Trajet) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = formatter.parse(Trajet.get(" starttime"));
@@ -356,6 +466,12 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Add a Recharge to the database
+     * @param Recharge recharge info
+     * @throws SQLException if query fails
+     * @throws ParseException if parse of date fails
+     */
     public void insertRecharge(HashMap<String, String> Recharge) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = formatter.parse(Recharge.get(" startTime"));
@@ -381,6 +497,16 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * End charging of a trottinette
+     * @param TID ID of trottinette
+     * @param UID ID of user
+     * @param endTime Time at which charge end
+     * @param destX position x to which the trottinette is returned
+     * @param destY position y to which the trottinette is returned
+     * @throws SQLException if query fails
+     * @throws ParseException if parse of date fails
+     */
     public void endCharge(int TID, int UID, String endTime, Double destX, Double destY) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = formatter.parse(endTime);
@@ -402,6 +528,12 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * End the intervention
+     * @param TID ID of trottinette
+     * @param note Note left by the technicien
+     * @throws SQLException if query fails
+     */
     public void resolveIntervention(int TID, String note) throws SQLException {
         Date date = new Date();
         Timestamp repair = new Timestamp(date.getTime());
@@ -417,6 +549,13 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Request a new intervention to the INTERVENTION table and randomly set a technicien to solve it
+     * @param TID ID of trottinette
+     * @param UID ID of user making the request
+     * @throws SQLException if query fails
+     * @throws ParseException if parse of date fails
+     */
     public void addingIntervention(int TID, String UID) throws SQLException, ParseException {
         Date date = new Date();
         Timestamp complainTime = new Timestamp(date.getTime());
@@ -446,6 +585,12 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Add an intervention to the database
+     * @param Intervention intervention info
+     * @throws SQLException if query fails
+     * @throws ParseException if parse of date fails
+     */
     public void insertIntervention(HashMap<String, String> Intervention) throws SQLException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = formatter.parse(Intervention.get(" complainTime"));
@@ -476,6 +621,11 @@ public class Database {
         statement.close();
     }
 
+    /**
+     * Get the trottinette with the longest distance covered
+     * @return trottinette
+     * @throws SQLException if query fails
+     */
     public int getTravolder() throws SQLException {
         int output;
         PreparedStatement statement = conn.prepareStatement("SELECT TID " +
@@ -491,6 +641,11 @@ public class Database {
         return output;
     }
 
+    /**
+     * Initialisation of the databse, setting all information from database_data into the database
+     * @throws SQLException if query fails
+     * @throws ParseException if parse of date fails
+     */
     public void init() throws SQLException, ParseException {
         ArrayList<HashMap<String,String>> reloads = CSVParser.parsing("Database_Data/reloads.csv");
         ArrayList<HashMap<String,String>> reparations = CSVParser.parsing("Database_Data/reparations.csv");
@@ -523,6 +678,11 @@ public class Database {
         }
     }
 
+    /**
+     * Get all the users
+     * @return list of users
+     * @throws SQLException if query fails
+     */
     public ArrayList<User> getUsers() throws SQLException {
         ArrayList<User> userList = new ArrayList<>();
         String query = "SELECT * FROM UTILISATEUR U " +
@@ -540,6 +700,12 @@ public class Database {
         return userList;
     }
 
+    /**
+     * Get history of travel of the user
+     * @param ID ID of the user
+     * @return list of path
+     * @throws SQLException if query fails
+     */
     public ArrayList<Path> getUserHistory(int ID) throws SQLException {
         ArrayList<Path> trips  = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement(
@@ -562,6 +728,11 @@ public class Database {
         return  trips;
     }
 
+    /**
+     * Get reloaders having used every trottinette they charged
+     * @return list of reloaders
+     * @throws SQLException if query fails
+     */
     public ArrayList<Integer> getR2() throws SQLException {
         ArrayList<Integer> users = new ArrayList<>();
         PreparedStatement statement = conn.prepareStatement(
@@ -581,6 +752,11 @@ public class Database {
         return users;
     }
 
+    /**
+     * User having done more than ten travel
+     * @return list of users
+     * @throws SQLException if query fails
+     */
     public ArrayList<HashMap<String,String>> getR5() throws SQLException {
         ArrayList<HashMap<String,String>> users = new ArrayList<>();
         HashMap<String, String> user = new HashMap<>();
@@ -609,12 +785,21 @@ public class Database {
         return users;
     }
 
+    /**
+     * close the connection to the database
+     * @throws SQLException if closing failed
+     */
     public void close() throws SQLException {
         if(this.conn != null && !this.conn.isClosed()){
             this.conn.close();
         }
     }
 
+    /**
+     * Set the position of the trottinette as the last travel they did (used during init)
+     * @param TID ID of trottinette
+     * @throws SQLException if query fails
+     */
     public void updatePosition(int TID) throws SQLException {
         System.out.println(TID);
         PreparedStatement statement = conn.prepareStatement(

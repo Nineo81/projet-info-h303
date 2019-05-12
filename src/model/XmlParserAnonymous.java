@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Parser of the anonymous file
+ */
 class XmlParserAnonymous{
 
     private static final String ID = "ID";

@@ -2,6 +2,7 @@ package controller;
 
 import model.Database;
 import model.Trottinette;
+import util.AlertMessage;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -9,10 +10,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * InfoTrottiPage link buttons action from InfoTrottiController to database access and window access
+ */
 public class InfoTrottiPage {
 
     private Main main;
 
+    /**
+     * Increment the number of complaint on a trottinette in the database
+     * @param TID
+     */
     public void complaint(int TID){
         Database db = Database.getInstance();
         db.open();
@@ -22,12 +30,18 @@ public class InfoTrottiPage {
             db.addingIntervention(TID,main.getUsername());
             db.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            AlertMessage.alert("Impossible de porter plainte !");
         } catch (ParseException e) {
-            e.printStackTrace();
         }
     }
 
+    /**
+     * When not in charge, update state of trottinette to in charge and add a new recharge to RECHARGE
+     * When already in charge, update state of trottinette to free and update RECHARGE
+     * @param TID ID of the trottinette to charge
+     * @param destX Position X where the trottinette is left after charge
+     * @param destY Position Y where the trottinette is left after charge
+     */
     public void charging(int TID, String destX, String destY){
         Database db = Database.getInstance();
         db.open();
@@ -61,9 +75,8 @@ public class InfoTrottiPage {
                 db.stateUpdate("en charge", TID);
                 db.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                AlertMessage.alert("Impossible de charger cette trottinette !");
             } catch (ParseException e) {
-                e.printStackTrace();
             }
         }
         else if(trotti.getState().equals("en charge")){
@@ -80,13 +93,16 @@ public class InfoTrottiPage {
                 db.stateUpdate("libre",TID);
                 db.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                AlertMessage.alert("Impossible de finir de charger cette trottinette !");
             } catch (ParseException e) {
-                e.printStackTrace();
             }
         }
     }
 
+    /**
+     *
+     * @param main Set the main to access info
+     */
     public void setMain(Main main){
         this.main = main;
     }

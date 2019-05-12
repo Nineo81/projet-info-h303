@@ -7,12 +7,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import util.AlertMessage;
 
 import java.util.HashMap;
 
 public class RegisterController {
 
     private RegisterPage registerPage;
+
+    private boolean upgrade = false;
 
     @FXML
     private CheckBox userCB;
@@ -116,9 +119,10 @@ public class RegisterController {
             newUser.put("number",numberTextField.getText());
         }
         else{
-            //TO DO: alert message no checkBox selected
+            AlertMessage.alert("Rien de sélectionné !");
         }
-        registerPage.register(newUser);
+        registerPage.register(newUser,upgrade);
+        upgrade = false;
     }
 
     @FXML
@@ -137,6 +141,8 @@ public class RegisterController {
         cancel.setVisible(false);
         userCB.setVisible(false);
         reloaderCB.setVisible(false);
+        reloaderCB.setSelected(true);
+        upgrade = true;
     }
 
 }

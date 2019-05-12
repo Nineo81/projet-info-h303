@@ -10,8 +10,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Parse de content of any csv file given
+ */
 public abstract class CSVParser {
 
+    /**
+     * Read the content of the csv file
+     * @param fileName csv file
+     * @return return a list of the data
+     */
     private static List<String[]> readCSV(String fileName){
         List<String[]> allData =null;
         try{
@@ -28,6 +36,11 @@ public abstract class CSVParser {
         return allData;
     }
 
+    /**
+     * Actual parsing of the csv
+     * @param allData data given by the reading of the csv
+     * @return list of hashmap with headers of the csv as key
+     */
     private static ArrayList<HashMap<String,String>> parseCSV(List<String[]> allData){
         ArrayList<HashMap<String,String>> list = new ArrayList<>();
         String[] header = new String[0];
@@ -50,6 +63,11 @@ public abstract class CSVParser {
         return list;
     }
 
+    /**
+     * launch the full parsing
+     * @param fileName csv file
+     * @return list of HashMap
+     */
     public static ArrayList<HashMap<String,String>> parsing(String fileName){
         return parseCSV(readCSV(fileName));
     }

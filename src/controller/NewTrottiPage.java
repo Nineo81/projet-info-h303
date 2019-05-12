@@ -1,6 +1,7 @@
 package controller;
 
 import model.Database;
+import util.AlertMessage;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -8,8 +9,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * NewTrottiPage link buttons action from NewTrottiController to database access
+ */
 public class NewTrottiPage {
 
+    /**
+     * Ask database to add a new trottinette with given information
+     * @param TID ID of the trottinette
+     * @param model Model of the trottinette
+     * @param posX Position X of the trottinette
+     * @param posY Position Y of the trottinette
+     */
     public void addTrotti(int TID, String model, Double posX, Double posY){
         HashMap<String, String> hmap = new HashMap<>();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -30,13 +41,8 @@ public class NewTrottiPage {
             db.insertTrottinette(hmap);
             db.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            AlertMessage.alert("Impossible d'ajouter la trottinette !");
         } catch (ParseException e) {
-            e.printStackTrace();
         }
-    }
-
-    public void setMain(Main main) {
-        Main main1 = main;
     }
 }

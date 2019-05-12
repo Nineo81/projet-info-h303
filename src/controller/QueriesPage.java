@@ -9,9 +9,10 @@ import java.util.HashMap;
 
 public class QueriesPage {
 
-    public ArrayList<Trottinette> R1(){
+    public ArrayList<String> R1(){
         Database db = Database.getInstance();
         ArrayList<Trottinette> res = null;
+        ArrayList<String> trottiList = new ArrayList<>();
         db.open();
 
         try {
@@ -21,7 +22,11 @@ public class QueriesPage {
             e.printStackTrace();
         }
 
-        return res;
+        for(Trottinette trotti : res){
+            trottiList.add(Integer.toString(trotti.getTID()));
+        }
+
+        return trottiList;
     }
 
     public ArrayList<Integer> R2(){

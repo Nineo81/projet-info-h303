@@ -4,6 +4,7 @@ import controller.RegisterPage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
@@ -48,6 +49,9 @@ public class RegisterController {
 
     @FXML
     private TextField zipCodeTextField;
+
+    @FXML
+    private Button cancel;
 
     @FXML
     private void initialize(){
@@ -124,6 +128,15 @@ public class RegisterController {
 
     public void setRegisterPage(RegisterPage registerPage){
         this.registerPage = registerPage;
+    }
+
+    public void presettingUser(int username, int password, long account){
+        usernameTextField.setText(Integer.toString(username));
+        passwordTextField.setText(Integer.toString(password));
+        accountTextField.setText(Long.toString(account));
+        cancel.setVisible(false);
+        userCB.setVisible(false);
+        reloaderCB.setVisible(false);
     }
 
 }
